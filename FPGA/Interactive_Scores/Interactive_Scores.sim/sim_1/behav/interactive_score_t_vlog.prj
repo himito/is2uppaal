@@ -1,0 +1,9 @@
+# compile verilog/system verilog design source files
+sv xil_defaultlib  "../../../Interactive_Scores.srcs/sources_1/new/clock_divider.sv"
+sv xil_defaultlib  "../../../Interactive_Scores.srcs/sources_1/new/rigid_ta.sv"
+sv xil_defaultlib  "../../../Interactive_Scores.srcs/sources_1/new/clock_ta.sv"
+sv xil_defaultlib  "../../../Interactive_Scores.srcs/sources_1/new/interactive_score.sv"
+sv xil_defaultlib  "../../../Interactive_Scores.srcs/sim_1/new/interactive_score_t.sv"
+
+# compile glbl module
+verilog xil_defaultlib "glbl.v"

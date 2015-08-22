@@ -1,0 +1,4 @@
+#!/bin/bash
+
+iconv -f UTF-16 -t UTF-8 $1 | awk '(/<startEvent/ || /<endEvent/|| /(\/)?Interval/ || /<(\/)?Scenario/ || /<(\/)?Automation/ || /<(\/)?event/ || /<(\/)?condition/ || /<(\/)?case/ || /<(\/)?command/){gsub(/(mute|color|verticalPosition|verticalSize|viewZoom|viewPosition)=\"([0-9]|u| |,|\.)*\"/,""); gsub(/[ ]+>/,">"); gsub(/[ ]+\/>/,"/>"); print }'
+

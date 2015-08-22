@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_1.dtd'><nta><declaration>// Place global declarations here.
+
+
+clock time;
+
+
+const int RB = 6;		// # rigid boxes
+const int FB = 6;		// # flexible boxes
+const int B = RB + FB;		// # total of boxes
+
+const int RR = 7;		// # rigid relations
+const int FR = 4;		// # flexible relations
+const int R = RR + FR;		// # total of relations
+
+const int C = 3;		// # controllers
+
+typedef int[0,RR] int_rr;	
+typedef int[0,FR] int_fr;
+
+const int E = 3;		// # de events
+
+
+broadcast chan boxesStarted[B];		// synchronization when a box has started 
+broadcast chan boxesStopped[B]; 	// synchronization when a box has finished
+broadcast chan boxesSkipped[B];		// synchronization when a box has been skipped
+broadcast chan boxesKilled[B];		// synchronization when a box has been killed
+
+broadcast chan relationsStarted[R]; 	// synchronization when a relation has started
+broadcast chan relationsKilled[R]; 	// synchronization when a relation has been killed
+
+broadcast chan minBoxReached[FB]; 	// synchronization when a box has reached its minimum duration
+
+broadcast chan startController[C]; 	// syncrhonization when a flexible relation has finished
+broadcast chan stopController[C];  	// synchronization when a flexible relation has stopped 
+broadcast chan skipController[C];  	// syncrhonization when a flexible relation has been skipped
+broadcast chan skippedController[C]; 	// syncrhonization when a controller has been skipped
+broadcast chan stoppedController[C];  	//syncrhonization when a controller has finished
+
+broadcast chan events[E];		// synchronization when an event is triggered
+
+broadcast chan launchProcesses[RB];
+broadcast chan stopProcesses[RB];
+
+broadcast chan null; 			// null point
+</declaration><template><name x="5" y="5">Rigid</name><parameter>int duration, broadcast chan &amp;initiate, broadcast chan &amp;started, broadcast chan &amp;stopped, broadcast chan &amp;skip, broadcast chan &amp;skipped, broadcast chan &amp;kill, broadcast chan &amp;killed</parameter><declaration>// Place local declarations here.
+
+clock t;</declaration><location id="id0" x="-184" y="-112"><name x="-194" y="-142">stop</name><committed/></location><location id="id1" x="-320" y="-32"><committed/></location><location id="id2" x="-328" y="-192"><committed/></location><location id="id3" x="-96" y="-112"></location><location id="id4" x="-320" y="-112"><label kind="invariant" x="-368" y="-144">t &lt;= duration</label></location><location id="id5" x="-416" y="-112"><name x="-432" y="-104">start</name><committed/></location><location id="id6" x="-520" y="-112"></location><init ref="id6"/><transition><source ref="id0"/><target ref="id3"/><label kind="synchronisation" x="-168" y="-128">stopped!</label></transition><transition><source ref="id2"/><target ref="id3"/><label kind="synchronisation" x="-264" y="-208">skipped!</label><nail x="-96" y="-192"/></transition><transition><source ref="id6"/><target ref="id2"/><label kind="synchronisation" x="-464" y="-208">skip?</label><nail x="-520" y="-192"/></transition><transition><source ref="id1"/><target ref="id3"/><label kind="synchronisation" x="-248" y="-32">killed!</label><nail x="-96" y="-32"/></transition><transition><source ref="id6"/><target ref="id1"/><label kind="synchronisation" x="-448" y="-32">kill?</label><nail x="-520" y="-32"/></transition><transition><source ref="id4"/><target ref="id1"/><label kind="synchronisation" x="-360" y="-88">kill ?</label></transition><transition><source ref="id4"/><target ref="id0"/><label kind="guard" x="-304" y="-128">t == duration</label></transition><transition><source ref="id5"/><target ref="id4"/><label kind="synchronisation" x="-400" y="-128">started!</label></transition><transition><source ref="id6"/><target ref="id5"/><label kind="synchronisation" x="-504" y="-128">initiate?</label><label kind="assignment" x="-496" y="-112">t = 0</label></transition></template><template><name>Event</name><parameter>int delay, broadcast chan &amp;event</parameter><declaration>clock t;</declaration><location id="id7" x="-280" y="-24"><label kind="invariant" x="-312" y="-8">t &lt;= delay</label></location><location id="id8" x="-160" y="-24"><name x="-144" y="-32">send</name></location><location id="id9" x="-376" y="-24"><urgent/></location><init ref="id9"/><transition><source ref="id7"/><target ref="id8"/><label kind="guard" x="-264" y="-40">t == delay</label><label kind="synchronisation" x="-248" y="-24">event!</label></transition><transition><source ref="id9"/><target ref="id7"/><label kind="assignment" x="-352" y="-24">t = 0</label></transition></template><template><name>Process</name><parameter>broadcast chan &amp;start, broadcast chan &amp;launch, broadcast chan &amp;stop, broadcast chan &amp;finish, broadcast chan &amp;skip, broadcast chan &amp;kill</parameter><location id="id10" x="-208" y="-64"><committed/></location><location id="id11" x="-120" y="-64"><name x="-104" y="-72">stopProc</name></location><location id="id12" x="-288" y="-64"></location><location id="id13" x="-384" y="-64"><name x="-408" y="-56">startProc</name><committed/></location><location id="id14" x="-464" y="-64"></location><init ref="id14"/><transition><source ref="id12"/><target ref="id10"/><label kind="synchronisation" x="-264" y="-40">kill?</label><nail x="-248" y="-40"/></transition><transition><source ref="id10"/><target ref="id11"/><label kind="synchronisation" x="-192" y="-80">finish!</label></transition><transition><source ref="id14"/><target ref="id11"/><label kind="synchronisation" x="-288" y="0">kill?</label><nail x="-464" y="-8"/><nail x="-120" y="-8"/></transition><transition><source ref="id14"/><target ref="id11"/><label kind="synchronisation" x="-312" y="-144">skip?</label><nail x="-464" y="-120"/><nail x="-392" y="-120"/><nail x="-120" y="-120"/></transition><transition><source ref="id12"/><target ref="id10"/><label kind="synchronisation" x="-272" y="-80">stop?</label></transition><transition><source ref="id13"/><target ref="id12"/><label kind="synchronisation" x="-368" y="-80">launch!</label></transition><transition><source ref="id14"/><target ref="id13"/><label kind="synchronisation" x="-448" y="-80">start?</label></transition></template><template><name>Flexible</name><parameter>int minDur, int maxDur, broadcast chan &amp;initiate, broadcast chan &amp;timeout, broadcast chan &amp;started, broadcast chan &amp;stopped, broadcast chan &amp;minReached, broadcast chan &amp;skip, broadcast chan &amp;skipped, broadcast chan &amp;kill,broadcast chan &amp;killed</parameter><declaration>clock t;</declaration><location id="id15" x="256" y="-80"></location><location id="id16" x="-120" y="-192"><committed/></location><location id="id17" x="-128" y="24"><committed/></location><location id="id18" x="144" y="-80"><name x="134" y="-110">stop</name><committed/></location><location id="id19" x="32" y="-80"><label kind="invariant" x="-16" y="-112">t &lt;= maxDur</label></location><location id="id20" x="-128" y="-80"><label kind="invariant" x="-168" y="-112">t &lt;= minDur</label></location><location id="id21" x="-232" y="-80"><name x="-248" y="-72">start</name><committed/></location><location id="id22" x="-336" y="-80"></location><init ref="id22"/><transition><source ref="id18"/><target ref="id15"/><label kind="synchronisation" x="168" y="-96">stopped!</label></transition><transition><source ref="id17"/><target ref="id15"/><label kind="synchronisation" x="16" y="32">killed!</label><nail x="256" y="24"/></transition><transition><source ref="id22"/><target ref="id17"/><label kind="synchronisation" x="-272" y="24">kill?</label><nail x="-336" y="24"/></transition><transition><source ref="id20"/><target ref="id17"/><label kind="synchronisation" x="-160" y="-48">kill?</label></transition><transition><source ref="id19"/><target ref="id17"/><label kind="synchronisation" x="-48" y="-32">kill?</label></transition><transition><source ref="id16"/><target ref="id15"/><label kind="synchronisation" x="-16" y="-208">skipped!</label><nail x="256" y="-192"/></transition><transition><source ref="id19"/><target ref="id18"/><label kind="guard" x="40" y="-56">t == maxDur</label><nail x="72" y="-56"/><nail x="112" y="-56"/></transition><transition><source ref="id19"/><target ref="id18"/><label kind="synchronisation" x="56" y="-96">timeout?</label></transition><transition><source ref="id20"/><target ref="id19"/><label kind="guard" x="-104" y="-96">t == minDur</label><label kind="synchronisation" x="-112" y="-80">minReached!</label></transition><transition><source ref="id21"/><target ref="id20"/><label kind="synchronisation" x="-216" y="-96">started!</label></transition><transition><source ref="id22"/><target ref="id21"/><label kind="synchronisation" x="-320" y="-96">initiate?</label><label kind="assignment" x="-320" y="-80">t = 0</label></transition><transition><source ref="id22"/><target ref="id16"/><label kind="synchronisation" x="-264" y="-208">skip ?</label><nail x="-336" y="-192"/></transition></template><template><name>RController</name><parameter>int_rr numRels, broadcast chan &amp;start, broadcast chan &amp;stopped, broadcast chan &amp;skip, broadcast chan &amp;skipped, broadcast chan &amp;kill  </parameter><declaration>
+int_rr counter = 0;
+
+bool pass = true;</declaration><location id="id23" x="-176" y="-120"></location><location id="id24" x="-496" y="-120"><committed/></location><location id="id25" x="-736" y="-120"></location><init ref="id25"/><transition><source ref="id25"/><target ref="id23"/><label kind="synchronisation" x="-432" y="-32">kill?</label><nail x="-736" y="-32"/><nail x="-176" y="-32"/></transition><transition><source ref="id24"/><target ref="id23"/><label kind="guard" x="-472" y="-88">counter == numRels &amp;&amp; pass == false</label><label kind="synchronisation" x="-368" y="-104">stopped!</label><nail x="-472" y="-88"/><nail x="-208" y="-88"/></transition><transition><source ref="id24"/><target ref="id23"/><label kind="guard" x="-472" y="-168">counter == numRels &amp;&amp; pass == true</label><label kind="synchronisation" x="-360" y="-152">skipped!</label><nail x="-488" y="-152"/><nail x="-200" y="-152"/></transition><transition><source ref="id24"/><target ref="id25"/><label kind="guard" x="-672" y="-80">counter &lt; numRels</label><nail x="-520" y="-80"/><nail x="-712" y="-80"/></transition><transition><source ref="id25"/><target ref="id24"/><label kind="synchronisation" x="-648" y="-184">skip?</label><label kind="assignment" x="-664" y="-168">counter++</label><nail x="-720" y="-168"/><nail x="-528" y="-168"/></transition><transition><source ref="id25"/><target ref="id24"/><label kind="synchronisation" x="-656" y="-136">start?</label><label kind="assignment" x="-712" y="-120">counter++, pass = false</label></transition></template><template><name>FController</name><parameter>int_fr numRels, broadcast chan &amp;start, broadcast chan &amp;event, broadcast chan &amp;stop, broadcast chan &amp;stopped, broadcast chan &amp;skip, broadcast chan &amp;skipped, broadcast chan &amp;kill</parameter><declaration>int_fr counter = 0;
+bool pass = true;</declaration><location id="id26" x="320" y="-64"><committed/></location><location id="id27" x="56" y="40"></location><location id="id28" x="160" y="-56"></location><location id="id29" x="-144" y="-56"><committed/></location><location id="id30" x="-344" y="-56"></location><init ref="id30"/><transition><source ref="id28"/><target ref="id26"/><label kind="synchronisation" x="224" y="-32">stop?</label><nail x="200" y="-32"/><nail x="280" y="-32"/></transition><transition><source ref="id28"/><target ref="id26"/><label kind="synchronisation" x="216" y="-104">event?</label><nail x="192" y="-88"/><nail x="208" y="-88"/><nail x="280" y="-88"/></transition><transition><source ref="id30"/><target ref="id27"/><label kind="synchronisation" x="-192" y="40">kill?</label><nail x="-384" y="-32"/><nail x="-384" y="40"/></transition><transition><source ref="id26"/><target ref="id27"/><label kind="synchronisation" x="200" y="40">stopped!</label><nail x="320" y="40"/></transition><transition><source ref="id28"/><target ref="id27"/><label kind="synchronisation" x="152" y="-16">kill?</label><nail x="144" y="0"/></transition><transition><source ref="id29"/><target ref="id27"/><label kind="guard" x="-128" y="-32">counter == numRels &amp;&amp; pass == true</label><label kind="synchronisation" x="-96" y="-8">skipped!</label></transition><transition><source ref="id29"/><target ref="id28"/><label kind="guard" x="-128" y="-72">counter == numRels &amp;&amp; pass == false</label></transition><transition><source ref="id29"/><target ref="id30"/><label kind="guard" x="-304" y="-8">counter &lt; numRels</label><nail x="-144" y="-8"/><nail x="-344" y="-8"/></transition><transition><source ref="id30"/><target ref="id29"/><label kind="synchronisation" x="-280" y="-72">start?</label><label kind="assignment" x="-328" y="-56">counter++, pass=false</label></transition><transition><source ref="id30"/><target ref="id29"/><label kind="synchronisation" x="-280" y="-96">skip?</label><label kind="assignment" x="-296" y="-112">counter++</label><nail x="-344" y="-96"/><nail x="-144" y="-96"/></transition></template><system>// Place template instantiations here.
+
+// Rigid (
+//	duration, 
+// 	initiate ch., 
+// 	started ch., 
+// 	stopped ch, 
+// 	skip ch., 
+// 	skipped ch., 
+// 	kill ch., 
+//	killed ch.) 
+
+// Rigid Boxes
+Box0 = Rigid(5, events[0], boxesStarted[0], boxesStopped[0], null, boxesSkipped[0], null, boxesKilled[0]);
+Box2 = Rigid(3, stoppedController[0], boxesStarted[2], boxesStopped[2], skippedController[0], boxesSkipped[2], null, boxesKilled[2]);
+Box3 = Rigid(4, stoppedController[1], boxesStarted[3], boxesStopped[3], skippedController[1], boxesSkipped[3], null, boxesKilled[3]);
+
+
+// Rigid Relations
+Rel0 = Rigid(4, boxesStopped[0], relationsStarted[0], startController[0], boxesSkipped[0], skipController[0], null, relationsKilled[0]);
+Rel1 = Rigid(1, boxesStopped[1], relationsStarted[1], startController[0], boxesSkipped[1], skipController[0], null, relationsKilled[1]);
+
+// Flexible (
+//	minDur, 
+//	maxDur, 
+//	chan initiate, 
+//	chan timeout, 
+//	chan started, 
+//	chan stopped, 
+//	chan minReached, 
+//	chan skip, 
+//	chan skipped, 
+//	chan kill, 
+//	chan killed)
+
+// Flexible Boxes 
+Box1 = Flexible (3, 10, events[0], events[1], boxesStarted[1], boxesStopped[1], minBoxReached[0], null, boxesSkipped[1], null, boxesKilled[1]);
+
+// Flexible Relations
+Rel2 = Flexible(2,5,boxesStopped[0],stoppedController[1],relationsStarted[2],stopController[1],startController[1],boxesSkipped[0],skipController[1],null,relationsKilled[2]);
+Rel3 = Flexible(1,5,boxesStopped[1],stoppedController[1],relationsStarted[3],stopController[1],startController[1],boxesSkipped[1],skipController[1],null,relationsKilled[3]);
+
+
+// Process (
+//	chan start, 
+//	chan launch proc, 
+//	chan stop, 
+// 	chan finish proc, 
+//	chan skip, 
+//	chan kill)
+
+// Processes 
+Proc0 = Process(boxesStarted[0], launchProcesses[0], boxesStopped[0], stopProcesses[0], boxesSkipped[0], boxesKilled[0]);
+Proc1 = Process(boxesStarted[1], launchProcesses[1], boxesStopped[1], stopProcesses[1], boxesSkipped[1], boxesKilled[1]);
+Proc2 = Process(boxesStarted[2], launchProcesses[2], boxesStopped[2], stopProcesses[2], boxesSkipped[2], boxesKilled[2]);
+Proc3 = Process(boxesStarted[3], launchProcesses[3], boxesStopped[3], stopProcesses[3], boxesSkipped[3], boxesKilled[3]);
+
+ 
+// RController (
+//	numRels, 
+//	start, 
+//	stopped,
+//	skip, 
+//	skipped, 
+//	kill)
+
+// Controller for Rigid Intervals 
+Control0 = RController(2, startController[0], stoppedController[0], skipController[0], skippedController[0], null);
+
+
+// FController (
+//	numRels,  
+// 	chan start, 
+//	chan event, 
+//	chan stop, 
+//	chan stopped,  
+//	chan skip, 
+//	chan skipped,
+//	chan kill)
+
+// Controllers for Flexible Intervals
+Control1 = FController(2, startController[1], events[2], stopController[1], stoppedController[1], skipController[1], skippedController[1], null);
+
+// Event(
+//	delay,
+//	event chan)
+
+// Events
+startSignal = Event(0,events[0]);
+Event1 = Event(4,events[1]);
+Event2 = Event(8, events[2]);
+
+// List one or more processes to be composed into a system.
+system startSignal, Box0, Proc0, Box1, Proc1, Event1, Box2, Proc2, Rel0, Rel1, Box3, Proc3, Control0, Rel2, Rel3, Control1, Event2;</system></nta>

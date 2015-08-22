@@ -1,0 +1,27 @@
+ <Scenario name="Main">
+  <startEvent name="start" date="0u"/>
+  <endEvent name="end" date="36000000u"/>
+  <event name="j322188540" date="2016u"/>
+  <event name="j2639017580" date="4000u"/>
+  <event name="j3018730916" date="4992u"/>
+  <event name="j776996823" date="6976u"/>
+  <event name="j1275261599" date="7952u"/>
+  <event name="j1834261961" date="13888u"/>
+  <Automation name="Box.2" start="j322188540" end="j3018730916"/>
+  <Scenario name="j359827271" start="j322188540" end="j3018730916"/>
+  <Automation name="Box.3" start="j2639017580" end="j776996823"/>
+  <Scenario name="j3595869094" start="j2639017580" end="j776996823"/>
+  <Automation name="Box.4" start="j1275261599" end="j1834261961"/>
+  <Scenario name="j303487093" start="j1275261599" end="j1834261961">
+   <event name="j421314487" date="1008u"/>
+   <event name="j3342158434" date="2000u"/>
+   <event name="j1141532756" date="3952u"/>
+   <event name="j2181639996" date="4936u"/>
+   <Automation name="Box.5" start="j421314487" end="j1141532756"/>
+   <Scenario name="j3798779220" start="j421314487" end="j1141532756"/>
+   <Automation name="Box.6" start="j3342158434" end="j2181639996"/>
+   <Scenario name="j3724834149" start="j3342158434" end="j2181639996"/>
+  </Scenario>
+  <Interval name="j1826855414" start="j3018730916" end="j1275261599" durationMin="2960u" durationMax="2960u"/>
+  <Interval name="j2764635628" start="j776996823" end="j1275261599" durationMin="976u" durationMax="976u"/>
+ </Scenario>

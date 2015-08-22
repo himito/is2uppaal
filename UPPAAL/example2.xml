@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_1.dtd'><nta><declaration>// Place global declarations here.
+
+clock global_clk;
+
+// Creating channels ...
+broadcast chan j65090658;
+broadcast chan j2952006715;
+broadcast chan j1554352744;
+broadcast chan j455788215;
+broadcast chan j1084063937;
+broadcast chan start;
+broadcast chan end;
+broadcast chan j987053184;
+broadcast chan j1703347331;
+broadcast chan j3705302109;
+broadcast chan skip_start;
+broadcast chan k_scenario;
+broadcast chan t366831641;
+broadcast chan k_Main;
+broadcast chan sc332180439;
+broadcast chan skip_332180439;
+broadcast chan skip_j1084063937;
+broadcast chan t641907500;
+broadcast chan skip_781944104;
+broadcast chan sj60170385;
+bool en_j60170385;
+broadcast chan k_j1503771027;
+broadcast chan k_j634570515;
+broadcast chan skip_j65090658;
+broadcast chan t844678370;
+broadcast chan k_i290180182;
+broadcast chan skip_j987053184;
+broadcast chan skip_308219921;
+broadcast chan scond754955217;
+broadcast chan skip_end;
+broadcast chan skip_j3705302109;
+bool en_j3036885040;
+broadcast chan sc521695949;
+broadcast chan skip_521695949;
+broadcast chan skip_97698678;
+broadcast chan t333944412;
+broadcast chan k_j4193346578;
+broadcast chan skip_j1554352744;
+broadcast chan scond986062401;
+bool en_j779494414;
+broadcast chan skip_j455788215;
+broadcast chan skip_j1703347331;
+broadcast chan k_j2905937333;
+broadcast chan t165192869;
+broadcast chan scond1000807289;
+bool en_j1819036789;
+broadcast chan skip_j2952006715;
+int msg_start;
+int msg_j60170385;
+broadcast chan j60170385;
+int msg_j3036885040;
+broadcast chan j3036885040;
+int msg_j1819036789;
+broadcast chan j1819036789;
+int msg_j779494414;
+broadcast chan j779494414;
+broadcast chan skip_0486393;
+broadcast chan skip_671426885;
+
+
+// ---------------------------------------------- - -----------------------------------------------------------
+
+// Interaction Points (with conditionals)
+const int EVENTS = 4;  // # events triggered
+typedef  int[0,EVENTS-1] event_t;
+
+// Multimedia processes
+const int PROCESSES = 1;  // # multimedia processes
+typedef int[0, PROCESSES -1] process_t; 
+int data[process_t];             // Data sent to multimedia processes
+broadcast chan send[process_t]; // Synchronzation channel for multimedia processes
+
+// Intervals
+const int INTERVALS = 13;
+typedef int[0,INTERVALS-1] interval_t;
+
+// Conditions
+const int POINTS = 4;
+typedef int[0, POINTS-1] point_t;
+
+bool condition(point_t id, int msg) {
+	if (id == 0){ return msg == 1;}
+	if (id == 1){return msg == 1;}
+	if (id == 2){return msg &gt;10;}
+	if (id == 3){return msg &lt;=10;}
+	return false;
+}
+
+
+// Temporal Objects
+const int TEXTURES = 7;
+const int STRUCTURES = 2;
+const int TOs = TEXTURES + STRUCTURES;
+typedef int[0, TOs-1] tos_t;
+typedef int[0, STRUCTURES-1] structure_t;
+
+// Controls
+const int CONTROLS = 3;
+typedef int[0, CONTROLS-1] control_t; 
+
+// Default channel
+broadcast chan null;</declaration><template><name x="5" y="5">Event</name><parameter>int &amp;msg, broadcast chan &amp;event, int date, int val</parameter><declaration>// Place local declarations here.
+
+clock t;</declaration><location id="id0" x="-8" y="-32"><committed/></location><location id="id1" x="112" y="-32"><name x="88" y="-64">stopped</name></location><location id="id2" x="-152" y="-32"><name x="-176" y="-64">waiting</name><label kind="invariant" x="-184" y="-16">t &lt;= date</label></location><init ref="id2"/><transition><source ref="id0"/><target ref="id1"/><label kind="synchronisation" x="16" y="-48">event!</label></transition><transition><source ref="id2"/><target ref="id0"/><label kind="guard" x="-120" y="-48">t == date</label><label kind="assignment" x="-127" y="-34">msg = val</label></transition></template><template><name>Multimedia</name><parameter>process_t id, int data1, int data2, broadcast chan &amp;start, broadcast chan &amp;stop, broadcast chan &amp;skip, broadcast chan &amp;kill</parameter><location id="id3" x="112" y="64"><committed/></location><location id="id4" x="360" y="0"><name x="336" y="-32">stopped</name></location><location id="id5" x="192" y="0"><committed/></location><location id="id6" x="112" y="0"><name x="88" y="-32">waiting</name></location><location id="id7" x="-40" y="0"><committed/></location><location id="id8" x="-120" y="0"><name x="-136" y="-32">idle</name></location><init ref="id8"/><transition><source ref="id3"/><target ref="id4"/><nail x="360" y="64"/></transition><transition><source ref="id6"/><target ref="id3"/><label kind="synchronisation" x="120" y="24">kill?</label></transition><transition><source ref="id8"/><target ref="id4"/><label kind="synchronisation" x="88" y="-80">skip?</label><nail x="-48" y="-64"/><nail x="312" y="-64"/></transition><transition><source ref="id8"/><target ref="id3"/><label kind="synchronisation" x="-8" y="48">kill?</label><nail x="-120" y="64"/><nail x="72" y="64"/></transition><transition><source ref="id5"/><target ref="id4"/><label kind="synchronisation" x="248" y="-16">send[id]!</label><label kind="assignment" x="216" y="0">data[id] = data2</label></transition><transition><source ref="id6"/><target ref="id5"/><label kind="synchronisation" x="128" y="-16">stop?</label></transition><transition><source ref="id7"/><target ref="id6"/><label kind="synchronisation" x="-8" y="-16">send[id]!</label><label kind="assignment" x="-24" y="0">data[id] = data1</label></transition><transition><source ref="id8"/><target ref="id7"/><label kind="synchronisation" x="-104" y="-16">start?</label></transition></template><template><name>Rigid</name><parameter>int dur, broadcast chan &amp;launch, broadcast chan &amp;stop, broadcast chan &amp;skip_p, broadcast chan &amp;kill_p, broadcast chan &amp;skip</parameter><declaration>clock t;</declaration><location id="id9" x="-34" y="-59"><committed/></location><location id="id10" x="-34" y="76"><committed/></location><location id="id11" x="68" y="8"><name x="44" y="-24">stopped</name></location><location id="id12" x="-32" y="8"><name x="-48" y="-24">waiting</name><label kind="invariant" x="-64" y="16">t &lt;= dur</label></location><location id="id13" x="-144" y="8"><name x="-154" y="-22">idle</name></location><init ref="id13"/><transition><source ref="id9"/><target ref="id11"/><label kind="synchronisation" x="0" y="-80">skip!</label><nail x="68" y="-59"/></transition><transition><source ref="id13"/><target ref="id9"/><label kind="synchronisation" x="-127" y="-76">skip_p?</label><nail x="-144" y="-59"/></transition><transition><source ref="id10"/><target ref="id11"/><label kind="synchronisation" x="17" y="76">stop!</label><nail x="68" y="76"/></transition><transition><source ref="id12"/><target ref="id10"/><label kind="synchronisation" x="-34" y="42">kill_p?</label></transition><transition><source ref="id13"/><target ref="id10"/><label kind="synchronisation" x="-119" y="76">kill_p?</label><nail x="-144" y="76"/></transition><transition><source ref="id12"/><target ref="id11"/><label kind="guard" x="-8" y="-8">t==dur</label><label kind="synchronisation" x="0" y="8">stop!</label></transition><transition><source ref="id13"/><target ref="id12"/><label kind="synchronisation" x="-119" y="-8">launch?</label><label kind="assignment" x="-112" y="8">t=0</label><nail x="-136" y="8"/><nail x="-136" y="8"/></transition></template><template><name>Flexible</name><parameter>int dmin, int dmax, bool finite, broadcast chan &amp;launch, broadcast chan &amp;min, broadcast chan &amp;timeout, broadcast chan &amp;stop, broadcast chan &amp;skip_p, broadcast chan &amp;kill_p, broadcast chan &amp;skip, broadcast chan &amp;kill</parameter><declaration>// Flexible represents flexible and semi-flexible intervals. 
+// Also, it represents structures and textures with an interaction point at the end
+
+clock t;</declaration><location id="id14" x="152" y="40"><name x="112" y="8">waiting_max_i</name></location><location id="id15" x="424" y="-24"><name x="392" y="-56">stopped</name></location><location id="id16" x="320" y="-24"><committed/></location><location id="id17" x="8" y="110"><committed/></location><location id="id18" x="16" y="-136"><committed/></location><location id="id19" x="136" y="-24"><name x="96" y="-56">waiting_max_f</name><label kind="invariant" x="104" y="-16">t&lt;=dmax</label></location><location id="id20" x="8" y="-24"><name x="-32" y="-56">waiting_min</name><label kind="invariant" x="-24" y="-16">t&lt;=dmin</label></location><location id="id21" x="-93" y="-25"><name x="-103" y="-55">idle</name></location><init ref="id21"/><transition><source ref="id14"/><target ref="id17"/><label kind="synchronisation" x="160" y="64">kill_p?</label><nail x="152" y="80"/></transition><transition><source ref="id14"/><target ref="id16"/><label kind="synchronisation" x="240" y="8">timeout?</label></transition><transition><source ref="id20"/><target ref="id14"/><label kind="guard" x="24" y="16">t==dmin &amp;&amp; finite == false</label><label kind="synchronisation" x="64" y="24">min!</label></transition><transition><source ref="id19"/><target ref="id16"/><label kind="guard" x="200" y="-80">t==dmax</label><nail x="152" y="-64"/><nail x="280" y="-64"/><nail x="312" y="-64"/></transition><transition><source ref="id17"/><target ref="id15"/><label kind="synchronisation" x="392" y="48">kill!</label><nail x="425" y="110"/></transition><transition><source ref="id18"/><target ref="id15"/><label kind="synchronisation" x="240" y="-152">skip!</label><nail x="424" y="-136"/></transition><transition><source ref="id21"/><target ref="id18"/><label kind="synchronisation" x="-76" y="-153">skip_p?</label><nail x="-93" y="-136"/></transition><transition><source ref="id16"/><target ref="id15"/><label kind="synchronisation" x="368" y="-40">stop!</label></transition><transition><source ref="id19"/><target ref="id16"/><label kind="synchronisation" x="208" y="-40">timeout?</label></transition><transition><source ref="id19"/><target ref="id17"/><label kind="synchronisation" x="48" y="56">kill_p?</label><nail x="120" y="64"/></transition><transition><source ref="id20"/><target ref="id19"/><label kind="guard" x="0" y="-40">t==dmin &amp;&amp; finite == true</label><label kind="synchronisation" x="56" y="-24">min!</label></transition><transition><source ref="id21"/><target ref="id17"/><label kind="synchronisation" x="-144" y="42">kill_p?</label><nail x="-93" y="110"/></transition><transition><source ref="id20"/><target ref="id17"/><label kind="synchronisation" x="-40" y="40">kill_p?</label></transition><transition><source ref="id21"/><target ref="id20"/><label kind="synchronisation" x="-68" y="-42">launch?</label><label kind="assignment" x="-53" y="-25">t=0</label></transition></template><template><name>Mix</name><parameter>broadcast chan &amp;event1, broadcast chan &amp;event2, broadcast chan &amp;skip, broadcast chan &amp;kill</parameter><location id="id22" x="-24" y="-32"><name x="-48" y="-56">stopped</name></location><location id="id23" x="-120" y="-32"><committed/></location><location id="id24" x="-208" y="-32"><name x="-218" y="-62">idle</name></location><init ref="id24"/><transition><source ref="id24"/><target ref="id22"/><label kind="synchronisation" x="-128" y="-88">skip?</label><nail x="-208" y="-72"/><nail x="-24" y="-72"/></transition><transition><source ref="id24"/><target ref="id22"/><label kind="synchronisation" x="-128" y="8">kill?</label><nail x="-208" y="8"/><nail x="-24" y="8"/></transition><transition><source ref="id23"/><target ref="id22"/><label kind="synchronisation" x="-102" y="-51">event2!</label></transition><transition><source ref="id24"/><target ref="id23"/><label kind="synchronisation" x="-184" y="-48">event1?</label></transition></template><template><name>Control</name><parameter>int n,  broadcast chan &amp;min, broadcast chan &amp;skip_p, broadcast chan &amp;skip, broadcast chan &amp;launch, broadcast chan &amp;kill</parameter><declaration>int counter = 0;
+bool skip_v = true;</declaration><location id="id25" x="200" y="-40"><name x="190" y="-70">stopped</name></location><location id="id26" x="-48" y="-40"><committed/></location><location id="id27" x="-240" y="-40"><name x="-250" y="-70">idle</name></location><init ref="id27"/><transition><source ref="id27"/><target ref="id25"/><label kind="synchronisation" x="-16" y="32">kill?</label><nail x="-240" y="32"/><nail x="200" y="32"/></transition><transition><source ref="id26"/><target ref="id27"/><label kind="guard" x="-200" y="0">counter&lt; n</label><nail x="-64" y="0"/><nail x="-224" y="0"/></transition><transition><source ref="id27"/><target ref="id26"/><label kind="synchronisation" x="-168" y="-104">min?</label><label kind="assignment" x="-232" y="-88">counter++, skip_v = false</label><nail x="-224" y="-72"/><nail x="-80" y="-72"/></transition><transition><source ref="id26"/><target ref="id25"/><label kind="guard" x="-8" y="-104">counter==n &amp;&amp; skip_v==true</label><label kind="synchronisation" x="56" y="-88">skip!</label><nail x="-48" y="-88"/><nail x="200" y="-88"/><nail x="200" y="-56"/></transition><transition><source ref="id26"/><target ref="id25"/><label kind="guard" x="-32" y="-56">counter==n &amp;&amp; skip_v == false</label><label kind="synchronisation" x="40" y="-40">launch!</label></transition><transition><source ref="id27"/><target ref="id26"/><label kind="synchronisation" x="-160" y="-56">skip_p?</label><label kind="assignment" x="-176" y="-40">counter++</label></transition></template><template><name>Point</name><parameter>point_t id, bool &amp;en, int &amp;msg, broadcast chan &amp;event, bool urg, broadcast chan &amp;launch, broadcast chan &amp;skip_p, broadcast chan &amp;stop, broadcast chan &amp;kill_p, broadcast chan &amp;skip,  broadcast chan &amp;start</parameter><declaration>bool cond;</declaration><location id="id28" x="-216" y="112"><committed/></location><location id="id29" x="-272" y="-88"><committed/></location><location id="id30" x="128" y="16"><name x="96" y="-16">stopped</name></location><location id="id31" x="-32" y="16"><committed/></location><location id="id32" x="-272" y="16"><name x="-320" y="-16">waiting_event</name></location><location id="id33" x="-376" y="16"><name x="-386" y="-14">idle</name></location><init ref="id33"/><transition><source ref="id32"/><target ref="id32"/><label kind="guard" x="-382" y="161">condition(id,msg) == false</label><label kind="synchronisation" x="-323" y="178">event?</label><nail x="-328" y="56"/><nail x="-272" y="88"/></transition><transition><source ref="id33"/><target ref="id30"/><label kind="synchronisation" x="-152" y="160">kill_p ?</label><nail x="-376" y="152"/><nail x="128" y="152"/></transition><transition><source ref="id33"/><target ref="id28"/><label kind="synchronisation" x="-312" y="112">stop?</label><nail x="-336" y="112"/></transition><transition><source ref="id28"/><target ref="id30"/><label kind="guard" x="-16" y="96">urg==false</label><label kind="synchronisation" x="0" y="112">skip!</label><nail x="72" y="112"/></transition><transition><source ref="id28"/><target ref="id30"/><label kind="guard" x="-96" y="72">urg == true</label><label kind="synchronisation" x="-88" y="56">start!</label><nail x="16" y="72"/></transition><transition><source ref="id32"/><target ref="id28"/><label kind="guard" x="-256" y="40">en==true</label><label kind="synchronisation" x="-232" y="56">stop?</label></transition><transition><source ref="id29"/><target ref="id30"/><label kind="synchronisation" x="-152" y="-104">skip!</label><nail x="128" y="-88"/></transition><transition><source ref="id33"/><target ref="id29"/><label kind="synchronisation" x="-360" y="-104">skip_p?</label><nail x="-376" y="-88"/></transition><transition><source ref="id32"/><target ref="id29"/><label kind="guard" x="-264" y="-72">en == false</label><label kind="synchronisation" x="-264" y="-56">stop ?</label></transition><transition><source ref="id31"/><target ref="id30"/><label kind="synchronisation" x="16" y="0">start!</label></transition><transition><source ref="id32"/><target ref="id31"/><label kind="guard" x="-264" y="16">condition(id, msg) == true</label><label kind="synchronisation" x="-248" y="0">event ?</label><label kind="assignment" x="-160" y="0">en=false</label><nail x="-256" y="16"/></transition><transition><source ref="id33"/><target ref="id32"/><label kind="synchronisation" x="-352" y="0">launch?</label><label kind="assignment" x="-368" y="16">en=true</label></transition></template><system>
+// Scenario
+Main = Flexible(0, 0, false, start, sc521695949, t366831641, end, skip_start, k_scenario, skip_end, k_Main); //OK
+
+// Control End Scenario
+c521695949 = Control(2, sc521695949, skip_521695949, skip_97698678, t366831641, k_Main); // OK
+m258803615 = Mix(skip_start, skip_521695949, start, k_Main); // OK
+
+
+// Flexible Interval R1
+i290180182 = Flexible(0, 0, false, start, scond754955217, j987053184, t844678370, skip_start, k_Main, skip_308219921, k_i290180182); //OK
+cond671426885 = Point(0, en_j3036885040, msg_j3036885040, j3036885040, true, scond754955217, skip_308219921, t844678370, k_Main, skip_j987053184, j987053184); //OK
+
+// Rigid Interval R2
+i994326685 = Rigid(1248, start, j65090658, skip_start, k_Main, skip_j65090658); //OK
+
+// Box 2
+j649731072 = Rigid(3632, j987053184, j2952006715, skip_j987053184, k_Main, skip_j2952006715); //OK 
+
+// Box 3
+j2905937333 = Flexible(0, 0, false, j65090658, scond1000807289, t165192869, j1703347331, skip_j65090658, k_Main, skip_j1703347331, k_j2905937333); //OK
+cond10486393 = Point(0, en_j1819036789, msg_j1819036789, j1819036789, true, scond1000807289, skip_j65090658, j1703347331, k_Main, skip_0486393, t165192869); // OK
+
+// Flexible Interval R3
+j1503771027 = Flexible(976, 2720, true, j2952006715, sc332180439, j1084063937, t641907500, skip_j2952006715, k_Main, skip_332180439, k_j1503771027);
+
+// Flexible Interval R4
+j634570515 = Flexible(1328, 0, false, j1703347331, sc332180439, j1084063937, t641907500, skip_j1703347331, k_Main, skip_332180439, k_j634570515);
+
+// Control Start Box 4
+c332180439 = Control(2, sc332180439, skip_332180439, skip_781944104, sj60170385, k_Main);
+cond930807020 = Point(0, en_j60170385, msg_j60170385, j60170385, true, sj60170385, skip_781944104, t641907500, k_Main, skip_j1084063937, j1084063937);
+
+// Box 4
+j4193346578 = Flexible(0, 0, false, j1084063937, scond986062401, t333944412, j3705302109, skip_j1084063937, k_Main, skip_521695949, k_j4193346578);
+cond601018606 = Point(0, en_j779494414, msg_j779494414, j779494414, true, scond986062401, skip_j1084063937, j3705302109, k_Main, skip_671426885, t333944412);
+m850233428 = Mix(j3705302109, k_j4193346578, skip_521695949, k_j4193346578);
+m97698678 = Mix(j3705302109, sc521695949, skip_521695949, k_j4193346578);
+
+
+// Rigid Interval R5
+i89809344 = Rigid(1584, j1084063937, j1554352744, skip_j1084063937, k_j4193346578, skip_j1554352744);
+
+// Box 5
+j1515786179 = Rigid(1984, j1554352744, j455788215, skip_j1554352744, k_j4193346578, skip_j455788215);
+
+// Start Scenario 
+e131134014 = Event(msg_start,start,0,1);
+
+// External Events
+e812433423 = Event(msg_j60170385,j60170385,7568,1);
+e495343723 = Event(msg_j3036885040,j3036885040,1984,1);
+e266656544 = Event(msg_j1819036789,j1819036789,4864,1);
+e386554096 = Event(msg_j779494414,j779494414,12720,1);
+
+
+system 
+c332180439,
+cond930807020,
+j1503771027,
+j634570515,
+i994326685,
+i290180182,
+cond671426885,
+m258803615,
+Main,
+c521695949,
+i89809344,
+j4193346578,
+cond601018606,
+m850233428,
+j1515786179,
+j2905937333,
+cond10486393,
+j649731072,
+e131134014,
+e812433423,
+e495343723,
+e266656544,
+m97698678,
+e386554096;
+
+
+
+</system></nta>

@@ -1,0 +1,760 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+
+clock clk;
+
+// Multimedia Structure
+typedef struct {
+    int value;
+    int offset;
+    } parameter_t;
+
+// Example
+parameter_t m_process[2] = {
+    {10,0}, {30,0}
+};
+
+// Conditions
+//bool condition(int id, int msg) {
+//	if (id == 0){return msg == 1;}
+//	if (id == 1){return msg == 1;}
+//    if (id == 2){return msg == 1;}
+//    if (id == 3){return msg == 1;}
+/*   Examples
+	if (id == 2){return msg &gt;10;}
+	if (id == 3){return msg &lt;=10;} */
+//	return false;
+//}
+
+// #################################### COPY HERE #################################################
+
+broadcast chan j148936351;
+broadcast chan j3117009672;
+broadcast chan j1185475536;
+broadcast chan j257254485;
+broadcast chan j3535097046;
+broadcast chan j992225847;
+broadcast chan j2154466060;
+broadcast chan start;
+broadcast chan j2063899803;
+broadcast chan end;
+broadcast chan j176940168;
+broadcast chan j2234682629;
+broadcast chan j4189972098;
+broadcast chan j2836118609;
+broadcast chan skip_start;
+broadcast chan k_scenario;
+broadcast chan skip_781944104;
+broadcast chan t641907500;
+broadcast chan k_Main;
+broadcast chan skip_end;
+broadcast chan sc930807020;
+broadcast chan skip_930807020;
+broadcast chan skip_j1185475536;
+broadcast chan t308219921;
+broadcast chan skip_308219921;
+broadcast chan sj4018764756;
+bool en_j4018764756;
+broadcast chan k_j2072171026;
+broadcast chan k_j508560527;
+broadcast chan k_i366831641;
+broadcast chan skip_j176940168;
+broadcast chan t844678370;
+broadcast chan k_i332180439;
+broadcast chan skip_j2234682629;
+broadcast chan skip_844678370;
+broadcast chan scond844678370;
+bool en_j3839354766;
+broadcast chan sc754955217;
+broadcast chan skip_754955217;
+broadcast chan skip_97698678;
+broadcast chan t521695949;
+broadcast chan k_j2809147628;
+broadcast chan skip_j4189972098;
+broadcast chan k_i89809344;
+broadcast chan skip_j2154466060;
+broadcast chan scond258803615;
+bool en_j3203541384;
+broadcast chan skip_850233428;
+broadcast chan t601018606;
+broadcast chan k_j4259124798;
+broadcast chan skip_j3535097046;
+broadcast chan k_i994326685;
+broadcast chan skip_j2063899803;
+broadcast chan k_i290180182;
+broadcast chan skip_j257254485;
+broadcast chan sc165192869;
+broadcast chan skip_165192869;
+broadcast chan k_j156645040;
+broadcast chan skip_j2836118609;
+broadcast chan k_j2384685447;
+broadcast chan skip_j148936351;
+broadcast chan k_j2158384247;
+broadcast chan skip_j3117009672;
+broadcast chan skip_10486393;
+broadcast chan t10486393;
+broadcast chan scond10486393;
+bool en_j2558378409;
+broadcast chan k_j4095874969;
+broadcast chan skip_j992225847;
+int msg_start;
+int msg_j2558378409;
+broadcast chan j2558378409;
+int msg_j4018764756;
+broadcast chan j4018764756;
+int msg_j3839354766;
+broadcast chan j3839354766;
+int msg_j3203541384;
+broadcast chan j3203541384;
+broadcast chan tj1185475536;
+broadcast chan t1, t2, t3, t4, t5, t6;</declaration>
+	<template>
+		<name x="5" y="5">Event</name>
+		<parameter>int &amp;msg, broadcast chan &amp;event, int date, int val</parameter>
+		<declaration>// Place local declarations here.
+
+clock t;</declaration>
+		<location id="id0" x="25" y="-34">
+			<name x="1" y="-66">finished</name>
+		</location>
+		<location id="id1" x="-153" y="-34">
+			<name x="-177" y="-66">waiting</name>
+			<label kind="invariant" x="-185" y="-18">t &lt;= date</label>
+		</location>
+		<init ref="id1"/>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-127" y="-51">t == date</label>
+			<label kind="synchronisation" x="-51" y="-51">event!</label>
+			<label kind="assignment" x="-119" y="-34">msg=val, t=0</label>
+		</transition>
+	</template>
+	<template>
+		<name>Event_ND</name>
+		<parameter>int &amp;msg, broadcast chan &amp;event, int date, int val</parameter>
+		<location id="id2" x="102" y="0">
+			<name x="76" y="-34">finished</name>
+		</location>
+		<location id="id3" x="-17" y="0">
+			<name x="-34" y="-34">idle</name>
+		</location>
+		<init ref="id3"/>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="17" y="-17">event!</label>
+			<label kind="assignment" x="8" y="0">msg=val</label>
+		</transition>
+	</template>
+	<template>
+		<name>Multimedia</name>
+		<parameter>broadcast chan &amp;send, int &amp;data, int limit, broadcast chan &amp;start, broadcast chan &amp;stop, broadcast chan &amp;skip_p, broadcast chan &amp;kill_p</parameter>
+		<declaration>clock t;
+
+int index = 0;</declaration>
+		<location id="id4" x="-25" y="102">
+			<name x="-50" y="111">finished</name>
+		</location>
+		<location id="id5" x="59" y="0">
+			<name x="76" y="-17">wait</name>
+			<label kind="invariant" x="76" y="0">t &lt;= m_process[index].offset</label>
+		</location>
+		<location id="id6" x="-120" y="0">
+			<name x="-136" y="-32">idle</name>
+		</location>
+		<init ref="id6"/>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="-42" y="34">kill_p?</label>
+			<label kind="assignment" x="-34" y="51">t=0</label>
+			<nail x="17" y="25"/>
+			<nail x="0" y="42"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-59" y="-85">t == m_process[index].offset &amp;&amp; index &lt; limit</label>
+			<label kind="synchronisation" x="34" y="-102">send!</label>
+			<label kind="assignment" x="-42" y="-68">t=0, data = m_process[index].value, index++</label>
+			<nail x="34" y="-51"/>
+			<nail x="85" y="-51"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="8" y="42">stop?</label>
+			<label kind="assignment" x="8" y="59">t=0</label>
+			<nail x="42" y="85"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id4"/>
+			<label kind="guard" x="17" y="102">t == m_process[index].offset &amp;&amp; index == limit</label>
+			<label kind="synchronisation" x="17" y="136">send!</label>
+			<label kind="assignment" x="17" y="119">data = m_process[index].value, t=0</label>
+			<nail x="59" y="102"/>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="-102" y="102">skip_p?</label>
+			<label kind="assignment" x="-102" y="119">t=0</label>
+			<nail x="-119" y="102"/>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="-93" y="34">kill_p?</label>
+			<label kind="assignment" x="-85" y="51">t=0</label>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-102" y="-17">t &gt;= 0</label>
+			<label kind="synchronisation" x="-59" y="0">start?</label>
+			<label kind="assignment" x="-51" y="-17">t = 0, index=0</label>
+		</transition>
+	</template>
+	<template>
+		<name>Rigid</name>
+		<parameter>int dur, broadcast chan &amp;event_s, broadcast chan &amp;event_e1, broadcast chan &amp;skip_p, broadcast chan &amp;kill_p, broadcast chan &amp;skip, broadcast chan &amp;kill, broadcast chan &amp;event_e2</parameter>
+		<declaration>clock t;</declaration>
+		<location id="id7" x="51" y="136">
+			<urgent/>
+		</location>
+		<location id="id8" x="-212" y="136">
+			<name x="-246" y="153">skipped</name>
+			<committed/>
+		</location>
+		<location id="id9" x="-85" y="68">
+			<name x="-136" y="68">killed</name>
+			<committed/>
+		</location>
+		<location id="id10" x="-85" y="136">
+			<name x="-110" y="153">finished</name>
+		</location>
+		<location id="id11" x="51" y="0">
+			<name x="42" y="-34">wait</name>
+			<label kind="invariant" x="68" y="-8">t &lt;= dur</label>
+		</location>
+		<location id="id12" x="-212" y="0">
+			<name x="-229" y="-34">idle</name>
+		</location>
+		<init ref="id12"/>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="-42" y="136">event_e2!</label>
+		</transition>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="-187" y="136">skip!</label>
+			<label kind="assignment" x="-144" y="136">t=0</label>
+		</transition>
+		<transition>
+			<source ref="id12"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="-263" y="42">skip_p?</label>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="-76" y="85">kill!</label>
+			<label kind="assignment" x="-76" y="102">t=0</label>
+		</transition>
+		<transition>
+			<source ref="id11"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="-76" y="25">kill_p?</label>
+		</transition>
+		<transition>
+			<source ref="id12"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="-153" y="17">kill_p?</label>
+		</transition>
+		<transition>
+			<source ref="id11"/>
+			<target ref="id7"/>
+			<label kind="guard" x="51" y="25">t==dur</label>
+			<label kind="synchronisation" x="51" y="42">event_e1!</label>
+			<label kind="assignment" x="51" y="59">t=0</label>
+		</transition>
+		<transition>
+			<source ref="id12"/>
+			<target ref="id11"/>
+			<label kind="guard" x="-161" y="-17">t&gt;=0</label>
+			<label kind="synchronisation" x="-110" y="-17">event_s?</label>
+			<label kind="assignment" x="-34" y="-17">t=0</label>
+			<nail x="-136" y="0"/>
+			<nail x="-136" y="0"/>
+		</transition>
+	</template>
+	<template>
+		<name>Flexible</name>
+		<parameter>int dmin, int dmax, bool finite, broadcast chan &amp;event_s, broadcast chan &amp;event_e1, broadcast chan &amp;event_i, broadcast chan &amp;event_e2, broadcast chan &amp;skip_p, broadcast chan &amp;kill_p, broadcast chan &amp;skip, broadcast chan &amp;kill</parameter>
+		<declaration>// Flexible represents flexible and semi-flexible intervals. 
+// Also, it represents structures and textures with an interaction point at the end
+
+clock t;</declaration>
+		<location id="id13" x="42" y="42">
+			<name x="59" y="42">flexible</name>
+		</location>
+		<location id="id14" x="-59" y="153">
+			<name x="-85" y="170">finished</name>
+		</location>
+		<location id="id15" x="102" y="153">
+			<committed/>
+		</location>
+		<location id="id16" x="-59" y="42">
+			<name x="-76" y="8">killed</name>
+			<committed/>
+		</location>
+		<location id="id17" x="-161" y="153">
+			<name x="-187" y="170">skipped</name>
+			<committed/>
+		</location>
+		<location id="id18" x="221" y="93">
+			<name x="238" y="85">semi_flexible</name>
+			<label kind="invariant" x="238" y="102">t&lt;=dmax</label>
+		</location>
+		<location id="id19" x="221" y="-59">
+			<name x="238" y="-76">wait_min</name>
+			<label kind="invariant" x="238" y="-59">t&lt;=dmin</label>
+		</location>
+		<location id="id20" x="-161" y="-59">
+			<name x="-170" y="-93">idle</name>
+		</location>
+		<init ref="id20"/>
+		<transition>
+			<source ref="id13"/>
+			<target ref="id16"/>
+			<label kind="synchronisation" x="-17" y="25">kill_p?</label>
+		</transition>
+		<transition>
+			<source ref="id13"/>
+			<target ref="id15"/>
+			<label kind="synchronisation" x="34" y="110">event_i?</label>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id13"/>
+			<label kind="guard" x="25" y="-17">t==dmin &amp;&amp; finite == false</label>
+			<label kind="synchronisation" x="85" y="0">event_e1!</label>
+			<nail x="170" y="8"/>
+		</transition>
+		<transition>
+			<source ref="id18"/>
+			<target ref="id15"/>
+			<label kind="guard" x="136" y="153">t==dmax</label>
+			<nail x="221" y="153"/>
+		</transition>
+		<transition>
+			<source ref="id16"/>
+			<target ref="id14"/>
+			<label kind="synchronisation" x="-85" y="85">kill!</label>
+			<label kind="assignment" x="-85" y="102">t=0</label>
+			<nail x="-59" y="85"/>
+		</transition>
+		<transition>
+			<source ref="id17"/>
+			<target ref="id14"/>
+			<label kind="synchronisation" x="-127" y="136">skip!</label>
+			<label kind="assignment" x="-119" y="153">t=0</label>
+			<nail x="-102" y="153"/>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id17"/>
+			<label kind="synchronisation" x="-221" y="51">skip_p?</label>
+			<nail x="-161" y="34"/>
+		</transition>
+		<transition>
+			<source ref="id15"/>
+			<target ref="id14"/>
+			<label kind="synchronisation" x="-34" y="136">event_e2!</label>
+			<label kind="assignment" x="42" y="136">t=0</label>
+		</transition>
+		<transition>
+			<source ref="id18"/>
+			<target ref="id15"/>
+			<label kind="synchronisation" x="119" y="110">event_i?</label>
+		</transition>
+		<transition>
+			<source ref="id18"/>
+			<target ref="id16"/>
+			<label kind="synchronisation" x="-8" y="68">kill_p?</label>
+			<nail x="0" y="93"/>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id18"/>
+			<label kind="guard" x="144" y="34">t==dmin &amp;&amp; finite == true</label>
+			<label kind="synchronisation" x="229" y="51">event_e1!</label>
+			<nail x="221" y="-8"/>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id16"/>
+			<label kind="synchronisation" x="-110" y="-25">kill_p?</label>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id16"/>
+			<label kind="synchronisation" x="-42" y="-25">kill_p?</label>
+			<nail x="25" y="-34"/>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id19"/>
+			<label kind="guard" x="-93" y="-76">t&gt;=0</label>
+			<label kind="synchronisation" x="-42" y="-76">event_s?</label>
+			<label kind="assignment" x="25" y="-76">t=0</label>
+		</transition>
+	</template>
+	<template>
+		<name>Mix</name>
+		<parameter>broadcast chan &amp;event_in, broadcast chan &amp;event_out, broadcast chan &amp;skip_p, broadcast chan &amp;kill_p</parameter>
+		<location id="id21" x="-153" y="34">
+			<name x="-178" y="42">finished</name>
+		</location>
+		<location id="id22" x="-102" y="-34">
+			<committed/>
+		</location>
+		<location id="id23" x="-204" y="-34">
+			<name x="-214" y="-64">idle</name>
+		</location>
+		<init ref="id23"/>
+		<transition>
+			<source ref="id23"/>
+			<target ref="id21"/>
+			<label kind="synchronisation" x="-246" y="34">skip_p?</label>
+			<nail x="-204" y="34"/>
+		</transition>
+		<transition>
+			<source ref="id23"/>
+			<target ref="id21"/>
+			<label kind="synchronisation" x="-178" y="-17">kill_p?</label>
+		</transition>
+		<transition>
+			<source ref="id22"/>
+			<target ref="id21"/>
+			<label kind="synchronisation" x="-127" y="0">event_out!</label>
+		</transition>
+		<transition>
+			<source ref="id23"/>
+			<target ref="id22"/>
+			<label kind="synchronisation" x="-187" y="-51">event_in?</label>
+		</transition>
+	</template>
+	<template>
+		<name>Control</name>
+		<parameter>int n,  broadcast chan &amp;event_s1, broadcast chan &amp;skip_p, broadcast chan &amp;skip, broadcast chan &amp;event_e, broadcast chan &amp;kill_p, broadcast chan &amp;event_s2</parameter>
+		<declaration>int counter = 0;
+bool skip_v = true;</declaration>
+		<location id="id24" x="-272" y="-110">
+			<name x="-289" y="-144">error</name>
+		</location>
+		<location id="id25" x="-272" y="102">
+			<name x="-297" y="111">finished</name>
+		</location>
+		<location id="id26" x="0" y="-34">
+			<committed/>
+		</location>
+		<location id="id27" x="-272" y="-34">
+			<name x="-314" y="-42">idle</name>
+		</location>
+		<init ref="id27"/>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id24"/>
+			<label kind="synchronisation" x="-340" y="-85">event_s2?</label>
+		</transition>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id25"/>
+			<label kind="synchronisation" x="-323" y="25">kill_p?</label>
+		</transition>
+		<transition>
+			<source ref="id26"/>
+			<target ref="id27"/>
+			<label kind="guard" x="-187" y="0">counter&lt; n</label>
+			<nail x="-64" y="0"/>
+			<nail x="-224" y="0"/>
+		</transition>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id26"/>
+			<label kind="synchronisation" x="-153" y="-102">event_s1?</label>
+			<label kind="assignment" x="-232" y="-88">counter++, skip_v = false</label>
+			<nail x="-224" y="-72"/>
+			<nail x="-80" y="-72"/>
+		</transition>
+		<transition>
+			<source ref="id26"/>
+			<target ref="id25"/>
+			<label kind="guard" x="-204" y="102">counter==n &amp;&amp; skip_v==true</label>
+			<label kind="synchronisation" x="-144" y="119">skip!</label>
+			<nail x="0" y="102"/>
+		</transition>
+		<transition>
+			<source ref="id26"/>
+			<target ref="id25"/>
+			<label kind="guard" x="-246" y="42">counter==n &amp;&amp; skip_v == false</label>
+			<label kind="synchronisation" x="-136" y="59">event_e!</label>
+			<nail x="-34" y="76"/>
+		</transition>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id26"/>
+			<label kind="synchronisation" x="-172" y="-53">skip_p?</label>
+			<label kind="assignment" x="-178" y="-34">counter++</label>
+		</transition>
+	</template>
+	<template>
+		<name>Point</name>
+		<parameter>int  id, int value, bool &amp;en, int &amp;msg, broadcast chan &amp;event, bool urg, broadcast chan &amp;event_s, broadcast chan &amp;skip_p, broadcast chan &amp;event_e, broadcast chan &amp;kill_p, broadcast chan &amp;skip,  broadcast chan &amp;event_t</parameter>
+		<declaration>bool cond = false;
+
+// Interpretation of a condition
+bool condition(){
+    if (id == 0) {return true;}          // trigger
+    if (id == 1) {return msg == value;}  // message = value 
+    if (id == 2) {return msg &lt; value;}   // message &lt; value
+    if (id == 3) {return msg &lt;= value;}  // message &lt;= value
+    if (id == 4) {return msg &gt; value;}   // message &gt; value
+    if (id == 5) {return msg &gt;= value;}  // message &gt;= value
+    return false;
+}</declaration>
+		<location id="id28" x="-59" y="136">
+			<urgent/>
+		</location>
+		<location id="id29" x="-144" y="68">
+			<name x="-161" y="85">timeout</name>
+			<committed/>
+		</location>
+		<location id="id30" x="-281" y="-59">
+			<name x="-306" y="-90">skipped</name>
+			<committed/>
+		</location>
+		<location id="id31" x="-348" y="68">
+			<name x="-424" y="60">finished</name>
+		</location>
+		<location id="id32" x="-59" y="25">
+			<name x="-42" y="8">cond_true</name>
+			<label kind="invariant" x="-42" y="25">cond == true</label>
+			<committed/>
+		</location>
+		<location id="id33" x="-144" y="-59">
+			<name x="-135" y="-85">enabled</name>
+		</location>
+		<location id="id34" x="-417" y="-59">
+			<name x="-433" y="-93">idle</name>
+		</location>
+		<init ref="id34"/>
+		<transition>
+			<source ref="id28"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="-187" y="136">event_e!</label>
+			<nail x="-289" y="136"/>
+		</transition>
+		<transition>
+			<source ref="id33"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="-229" y="-8">kill_p?</label>
+		</transition>
+		<transition>
+			<source ref="id34"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="-433" y="0">kill_p ?</label>
+		</transition>
+		<transition>
+			<source ref="id29"/>
+			<target ref="id31"/>
+			<label kind="guard" x="-263" y="76">urg==false</label>
+			<label kind="synchronisation" x="-238" y="93">skip!</label>
+			<nail x="-170" y="93"/>
+			<nail x="-280" y="93"/>
+		</transition>
+		<transition>
+			<source ref="id29"/>
+			<target ref="id31"/>
+			<label kind="guard" x="-323" y="51">urg == true</label>
+			<label kind="synchronisation" x="-229" y="51">event_t!</label>
+			<nail x="-221" y="68"/>
+		</transition>
+		<transition>
+			<source ref="id33"/>
+			<target ref="id29"/>
+			<label kind="guard" x="-144" y="-8">en==true</label>
+			<label kind="synchronisation" x="-144" y="-25">event_e?</label>
+		</transition>
+		<transition>
+			<source ref="id30"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="-340" y="-25">skip!</label>
+		</transition>
+		<transition>
+			<source ref="id34"/>
+			<target ref="id30"/>
+			<label kind="synchronisation" x="-374" y="-76">skip_p?</label>
+		</transition>
+		<transition>
+			<source ref="id33"/>
+			<target ref="id30"/>
+			<label kind="guard" x="-264" y="-59">en == false</label>
+			<label kind="synchronisation" x="-238" y="-76">event_e?</label>
+		</transition>
+		<transition>
+			<source ref="id32"/>
+			<target ref="id28"/>
+			<label kind="synchronisation" x="-51" y="68">event_t!</label>
+			<label kind="assignment" x="-51" y="85">en=false</label>
+		</transition>
+		<transition>
+			<source ref="id33"/>
+			<target ref="id32"/>
+			<label kind="guard" x="-51" y="-59">cond == false</label>
+			<label kind="synchronisation" x="-51" y="-42">event ?</label>
+			<label kind="assignment" x="-51" y="-25">cond = condition()</label>
+			<nail x="-59" y="-59"/>
+		</transition>
+		<transition>
+			<source ref="id34"/>
+			<target ref="id33"/>
+			<label kind="synchronisation" x="-340" y="-118">event_s?</label>
+			<label kind="assignment" x="-272" y="-118">en=true</label>
+			<nail x="-383" y="-101"/>
+			<nail x="-196" y="-101"/>
+		</transition>
+	</template>
+	<system>// Scenario
+Scenario = Flexible(0, 0, false, start, sc754955217, t641907500, end, skip_start, k_scenario, skip_end, k_Main);
+c754955217 = Control(2, sc754955217, skip_754955217, skip_781944104, t641907500, k_Main, end); // Control to stop the scenario
+m671426885 = Mix(skip_start, skip_754955217, start, k_Main); // Adding skip to the internal TR of the scenario
+Event_Start_Scenario = Event(msg_start,start,0,1); // Event to start the scenario
+
+// TR : Texture A -&gt; Structure C
+TR_A_C = Flexible(1200, 2560, true, j992225847, sc930807020, j1185475536, t308219921, skip_j992225847, k_Main, skip_930807020, k_j2072171026);
+
+// TR : Texture B -&gt; Structure C
+TR_B_C = Flexible(300, 4000, true, j3117009672, sc930807020, j1185475536, t308219921, skip_j3117009672, k_Main, skip_930807020, k_j508560527);
+
+// IP at start of C
+IP_Start_C = Point(0, 0, en_j4018764756, msg_j4018764756, j4018764756, true, sj4018764756, skip_308219921, t308219921, k_Main, skip_j1185475536, j1185475536);
+Control_Start_C = Control(2, sc930807020, skip_930807020, skip_308219921, sj4018764756, k_Main, t308219921); // Control to the TRs from A and B
+Event_Start_C = Event_ND(msg_j4018764756,j4018764756,8720,1); // External event
+
+// Structure C
+Structure_C = Flexible(0, 10000, true, j1185475536, scond258803615, t521695949, j4189972098, skip_j1185475536, k_Main, skip_754955217, k_j2809147628);
+m986062401 = Mix(j4189972098, sc754955217, skip_754955217, k_Main); // Mixing the stop of C with the stop of the scenario
+kill_C = Mix(j4189972098, k_j2809147628, skip_754955217, k_Main); // Mixing the stop of C with the stop of its children
+
+// IP at the end of C
+IP_Stop_C = Point(0, 0, en_j3203541384, msg_j3203541384, j3203541384, true, scond258803615, skip_j1185475536, j4189972098, k_Main, skip_97698678, t521695949);
+Event_Stop_C = Event_ND(msg_j3203541384,j3203541384,15648,1); // External event
+
+// TR : Structure C -&gt; Structure D
+TR_C_D = Rigid(1248, j1185475536, j2154466060, skip_j1185475536, k_j2809147628, skip_j2154466060, k_i89809344, tj1185475536);
+
+// Structure D
+Structure_D = Flexible(4800, 0, false, j2154466060, sc165192869, t601018606, j3535097046, skip_j2154466060, k_j2809147628, skip_j3535097046, k_j4259124798);
+m1000807289 = Mix(skip_j2154466060, skip_165192869, j2154466060, k_j4259124798); // Adding skip to the interval TR of D
+c165192869 = Control(3, sc165192869, skip_165192869, skip_850233428, t601018606, k_j4259124798, j3535097046); // Control to stop D
+
+// TR: Structure D -&gt; Texture F
+TR_D_F = Rigid(1152, j2154466060, j257254485, skip_j2154466060, k_j4259124798, skip_j257254485, k_i290180182, t1);	
+
+// Texture F
+Texture_F = Rigid(2832, j257254485, sc165192869, skip_j257254485, k_j4259124798, skip_165192869, k_j2384685447, t2);
+
+// TR : Structure D -&gt; Texture G
+TR_D_G = Rigid(50, j2154466060, j2063899803, skip_j2154466060, k_j4259124798, skip_j2063899803, k_i994326685, t3);
+
+// Texture G
+Texture_G = Rigid(1000, j2063899803, sc165192869, skip_j2063899803, k_j4259124798, skip_165192869, k_j156645040, t4);
+
+// TR : Scenario -&gt; Texture A
+TR_Scenario_A = Flexible(0, 3776, true, start, scond844678370, j2234682629, t844678370, skip_start, k_Main, skip_844678370, k_i332180439);
+
+// IP at start of A
+IP_Start_A = Point(0, 0, en_j3839354766, msg_j3839354766, j3839354766, true, scond844678370, skip_844678370, t844678370, k_Main, skip_j2234682629, j2234682629);
+Event_Start_A = Event_ND(msg_j3839354766,j3839354766,3776,1); // External event
+
+// Texture A
+Texture_A = Rigid(3024, j2234682629, j992225847, skip_j2234682629, k_Main, skip_j992225847, k_j4095874969, t5);
+
+// TR : Scenario -&gt; Texture B
+TR_Scenario_B = Rigid(3168, start, j176940168, skip_start, k_Main, skip_j176940168, k_i366831641, t6);
+
+// Texture B
+Texture_B = Flexible(1000, 2000, true, j176940168, scond10486393, t10486393, j3117009672, skip_j176940168, k_Main, skip_j3117009672, k_j2158384247);
+
+// IP at the end of B
+IP_Stop_B = Point(0, 0, en_j2558378409, msg_j2558378409, j2558378409, true, scond10486393, skip_j176940168, j3117009672, k_Main, skip_10486393, t10486393);
+Event_Stop_B = Event_ND(msg_j2558378409,j2558378409,6288,1); // External event
+
+// --------------------------------------------- SYSTEM HERE ------------------------------------------------------
+system
+Scenario,
+c754955217,
+m671426885,
+Event_Start_Scenario,
+TR_A_C,
+TR_B_C,
+IP_Start_C,
+Control_Start_C,
+Event_Start_C,
+Structure_C,
+m986062401,
+kill_C,
+IP_Stop_C,
+Event_Stop_C,
+TR_C_D,
+Structure_D,
+m1000807289,
+c165192869,
+TR_D_F,
+Texture_F,
+TR_D_G,
+Texture_G,
+TR_Scenario_A,
+IP_Start_A,
+Event_Start_A,
+Texture_A,
+TR_Scenario_B,
+Texture_B,
+IP_Stop_B,
+Event_Stop_B;
+</system>
+	<queries>
+		<query>
+			<formula>E&lt;&gt; Structure_C.wait_min &amp;&amp; clk &lt; 4468
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>A[] !Control_Start_C.error
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Texture_G.wait &amp;&amp; Texture_F.wait
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>A&lt;&gt; Scenario.finished
+			</formula>
+			<comment>
+			</comment>
+		</query>
+	</queries>
+</nta>

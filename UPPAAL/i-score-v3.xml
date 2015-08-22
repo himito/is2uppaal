@@ -1,0 +1,683 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+
+clock global_clk;
+
+
+// Interaction Points (with conditionals)
+const int EVENTS = 4;  // # events triggered
+
+typedef  int[0,EVENTS-1] event_t;
+
+int msg[event_t]; // Messages of events
+bool en[event_t]; // enable event
+
+broadcast chan event[event_t]; // Synchronization channel for events
+
+// Multimedia processes
+const int PROCESSES = 1;  // # multimedia processes
+typedef int[0, PROCESSES -1] process_t; 
+int data[process_t];             // Data sent to multimedia processes
+broadcast chan send[process_t]; // Synchronzation channel for multimedia processes
+
+// Intervals
+const int INTERVALS = 13;
+typedef int[0,INTERVALS-1] interval_t;
+broadcast chan startedI[interval_t];
+broadcast chan stoppedI[interval_t];
+broadcast chan skippedI[interval_t];
+
+// Conditions
+const int POINTS = 4;
+typedef int[0, POINTS-1] point_t;
+broadcast chan startP[point_t];
+broadcast chan stopP[point_t];
+broadcast chan skippedP[point_t];
+broadcast chan stoppedP[point_t];
+
+bool condition(point_t id, int msg) {
+	if (id == 0){ return msg == 1;}
+	if (id == 1){return msg == 1;}
+	if (id == 2){return msg &gt;10;}
+	if (id == 3){return msg &lt;=10;}
+	return false;
+}
+
+
+// Temporal Objects
+const int TEXTURES = 7;
+const int STRUCTURES = 2;
+const int TOs = TEXTURES + STRUCTURES;
+typedef int[0, TOs-1] tos_t;
+typedef int[0, STRUCTURES-1] structure_t;
+
+
+broadcast chan startedTO[tos_t];
+broadcast chan stoppedTO[tos_t];
+broadcast chan skippedTO[tos_t];
+broadcast chan killedTO[tos_t];
+
+
+// Controls
+const int CONTROLS = 3;
+typedef int[0, CONTROLS-1] control_t; 
+broadcast chan startC[control_t];
+broadcast chan skipC[control_t];
+broadcast chan skippedC[control_t];
+broadcast chan stoppedC[control_t];
+
+// Default channel
+broadcast chan null;</declaration>
+	<template>
+		<name x="5" y="5">Event</name>
+		<parameter>event_t id, int date, int val</parameter>
+		<declaration>// Place local declarations here.
+
+clock t;</declaration>
+		<location id="id0" x="-8" y="-32">
+			<committed/>
+		</location>
+		<location id="id1" x="112" y="-32">
+			<name x="88" y="-64">stopped</name>
+		</location>
+		<location id="id2" x="-152" y="-32">
+			<name x="-176" y="-64">waiting</name>
+			<label kind="invariant" x="-184" y="-16">t &lt;= date</label>
+		</location>
+		<init ref="id2"/>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="16" y="-48">event[id]!</label>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-120" y="-48">t == date</label>
+			<label kind="assignment" x="-136" y="-32">msg[id] = val</label>
+		</transition>
+	</template>
+	<template>
+		<name>Multimedia</name>
+		<parameter>process_t id, int data1, int data2, broadcast chan &amp;start, broadcast chan &amp;stop, broadcast chan &amp;skip, broadcast chan &amp;kill</parameter>
+		<location id="id3" x="112" y="64">
+			<committed/>
+		</location>
+		<location id="id4" x="360" y="0">
+			<name x="336" y="-32">stopped</name>
+		</location>
+		<location id="id5" x="192" y="0">
+			<committed/>
+		</location>
+		<location id="id6" x="112" y="0">
+			<name x="88" y="-32">waiting</name>
+		</location>
+		<location id="id7" x="-40" y="0">
+			<committed/>
+		</location>
+		<location id="id8" x="-120" y="0">
+			<name x="-136" y="-32">idle</name>
+		</location>
+		<init ref="id8"/>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id4"/>
+			<nail x="360" y="64"/>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id3"/>
+			<label kind="synchronisation" x="120" y="24">kill?</label>
+		</transition>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="88" y="-80">skip?</label>
+			<nail x="-48" y="-64"/>
+			<nail x="312" y="-64"/>
+		</transition>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id3"/>
+			<label kind="synchronisation" x="-8" y="48">kill?</label>
+			<nail x="-120" y="64"/>
+			<nail x="72" y="64"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="248" y="-16">send[id]!</label>
+			<label kind="assignment" x="216" y="0">data[id] = data2</label>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id5"/>
+			<label kind="synchronisation" x="128" y="-16">stop?</label>
+		</transition>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id6"/>
+			<label kind="synchronisation" x="-8" y="-16">send[id]!</label>
+			<label kind="assignment" x="-24" y="0">data[id] = data1</label>
+		</transition>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id7"/>
+			<label kind="synchronisation" x="-104" y="-16">start?</label>
+		</transition>
+	</template>
+	<template>
+		<name>Rigid</name>
+		<parameter>int dur, broadcast chan &amp;launch, broadcast chan &amp;start, broadcast chan &amp;stop, broadcast chan &amp;skip_p, broadcast chan &amp;kill_p, broadcast chan &amp;skip</parameter>
+		<declaration>clock t;</declaration>
+		<location id="id9" x="-48" y="-64">
+			<committed/>
+		</location>
+		<location id="id10" x="-32" y="72">
+			<committed/>
+		</location>
+		<location id="id11" x="72" y="8">
+			<name x="48" y="-24">stopped</name>
+		</location>
+		<location id="id12" x="-32" y="8">
+			<name x="-48" y="-24">waiting</name>
+			<label kind="invariant" x="-64" y="16">t &lt;= dur</label>
+		</location>
+		<location id="id13" x="-120" y="8">
+			<name x="-144" y="-24">started</name>
+			<committed/>
+		</location>
+		<location id="id14" x="-208" y="8">
+			<name x="-218" y="-22">idle</name>
+		</location>
+		<init ref="id14"/>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id11"/>
+			<label kind="synchronisation" x="0" y="-80">skip!</label>
+			<nail x="72" y="-64"/>
+		</transition>
+		<transition>
+			<source ref="id14"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="-176" y="-80">skip_p?</label>
+			<nail x="-208" y="-64"/>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id11"/>
+			<label kind="synchronisation" x="24" y="72">stop!</label>
+			<nail x="72" y="72"/>
+		</transition>
+		<transition>
+			<source ref="id12"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="-24" y="32">kill_p?</label>
+		</transition>
+		<transition>
+			<source ref="id14"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="-168" y="72">kill_p?</label>
+			<nail x="-208" y="72"/>
+		</transition>
+		<transition>
+			<source ref="id12"/>
+			<target ref="id11"/>
+			<label kind="guard" x="-8" y="-8">t==dur</label>
+			<label kind="synchronisation" x="0" y="8">stop!</label>
+		</transition>
+		<transition>
+			<source ref="id13"/>
+			<target ref="id12"/>
+			<label kind="synchronisation" x="-96" y="-8">start!</label>
+		</transition>
+		<transition>
+			<source ref="id14"/>
+			<target ref="id13"/>
+			<label kind="synchronisation" x="-192" y="-8">launch?</label>
+			<label kind="assignment" x="-176" y="8">t=0</label>
+			<nail x="-136" y="8"/>
+			<nail x="-136" y="8"/>
+		</transition>
+	</template>
+	<template>
+		<name>Flexible</name>
+		<parameter>int dmin, int dmax, bool finite, broadcast chan &amp;launch, broadcast chan &amp;start, broadcast chan &amp;min, broadcast chan &amp;timeout, broadcast chan &amp;stop, broadcast chan &amp;skip_p, broadcast chan &amp;kill_p, broadcast chan &amp;skip, broadcast chan &amp;kill</parameter>
+		<declaration>// Flexible represents flexible and semi-flexible intervals. 
+// Also, it represents structures and textures with an interaction point at the end
+
+clock t;</declaration>
+		<location id="id15" x="152" y="40">
+			<name x="112" y="8">waiting_max_i</name>
+		</location>
+		<location id="id16" x="424" y="-24">
+			<name x="392" y="-56">stopped</name>
+		</location>
+		<location id="id17" x="320" y="-24">
+			<committed/>
+		</location>
+		<location id="id18" x="8" y="104">
+			<committed/>
+		</location>
+		<location id="id19" x="16" y="-136">
+			<committed/>
+		</location>
+		<location id="id20" x="136" y="-24">
+			<name x="96" y="-56">waiting_max_f</name>
+			<label kind="invariant" x="104" y="-16">t&lt;=dmax</label>
+		</location>
+		<location id="id21" x="8" y="-24">
+			<name x="-32" y="-56">waiting_min</name>
+			<label kind="invariant" x="-24" y="-16">t&lt;=dmin</label>
+		</location>
+		<location id="id22" x="-96" y="-24">
+			<committed/>
+		</location>
+		<location id="id23" x="-192" y="-24">
+			<name x="-202" y="-54">idle</name>
+		</location>
+		<init ref="id23"/>
+		<transition>
+			<source ref="id15"/>
+			<target ref="id18"/>
+			<label kind="synchronisation" x="160" y="64">kill_p?</label>
+			<nail x="152" y="80"/>
+		</transition>
+		<transition>
+			<source ref="id15"/>
+			<target ref="id17"/>
+			<label kind="synchronisation" x="240" y="8">timeout?</label>
+		</transition>
+		<transition>
+			<source ref="id21"/>
+			<target ref="id15"/>
+			<label kind="guard" x="24" y="16">t==dmin &amp;&amp; finite == false</label>
+			<label kind="synchronisation" x="64" y="24">min!</label>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id17"/>
+			<label kind="guard" x="200" y="-80">t==dmax</label>
+			<nail x="152" y="-64"/>
+			<nail x="280" y="-64"/>
+			<nail x="312" y="-64"/>
+		</transition>
+		<transition>
+			<source ref="id18"/>
+			<target ref="id16"/>
+			<label kind="synchronisation" x="392" y="48">kill!</label>
+			<nail x="424" y="104"/>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id16"/>
+			<label kind="synchronisation" x="240" y="-152">skip!</label>
+			<nail x="424" y="-136"/>
+		</transition>
+		<transition>
+			<source ref="id23"/>
+			<target ref="id19"/>
+			<label kind="synchronisation" x="-152" y="-152">skip_p?</label>
+			<nail x="-192" y="-136"/>
+		</transition>
+		<transition>
+			<source ref="id17"/>
+			<target ref="id16"/>
+			<label kind="synchronisation" x="368" y="-40">stop!</label>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id17"/>
+			<label kind="synchronisation" x="208" y="-40">timeout?</label>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id18"/>
+			<label kind="synchronisation" x="48" y="56">kill_p?</label>
+			<nail x="120" y="64"/>
+		</transition>
+		<transition>
+			<source ref="id21"/>
+			<target ref="id20"/>
+			<label kind="guard" x="0" y="-40">t==dmin &amp;&amp; finite == true</label>
+			<label kind="synchronisation" x="56" y="-24">min!</label>
+		</transition>
+		<transition>
+			<source ref="id23"/>
+			<target ref="id18"/>
+			<label kind="synchronisation" x="-184" y="48">kill_p?</label>
+			<nail x="-192" y="104"/>
+		</transition>
+		<transition>
+			<source ref="id21"/>
+			<target ref="id18"/>
+			<label kind="synchronisation" x="-40" y="40">kill_p?</label>
+		</transition>
+		<transition>
+			<source ref="id22"/>
+			<target ref="id21"/>
+			<label kind="synchronisation" x="-64" y="-40">start!</label>
+		</transition>
+		<transition>
+			<source ref="id23"/>
+			<target ref="id22"/>
+			<label kind="synchronisation" x="-168" y="-40">launch?</label>
+			<label kind="assignment" x="-152" y="-24">t=0</label>
+		</transition>
+	</template>
+	<template>
+		<name>Mix</name>
+		<parameter>broadcast chan &amp;stop, broadcast chan &amp;skip, broadcast chan &amp;kill</parameter>
+		<location id="id24" x="-24" y="-32">
+			<name x="-48" y="-56">stopped</name>
+		</location>
+		<location id="id25" x="-120" y="-32">
+			<committed/>
+		</location>
+		<location id="id26" x="-208" y="-32">
+			<name x="-218" y="-62">idle</name>
+		</location>
+		<init ref="id26"/>
+		<transition>
+			<source ref="id26"/>
+			<target ref="id24"/>
+			<label kind="synchronisation" x="-128" y="-88">skip?</label>
+			<nail x="-208" y="-72"/>
+			<nail x="-24" y="-72"/>
+		</transition>
+		<transition>
+			<source ref="id26"/>
+			<target ref="id24"/>
+			<label kind="synchronisation" x="-128" y="8">kill?</label>
+			<nail x="-208" y="8"/>
+			<nail x="-24" y="8"/>
+		</transition>
+		<transition>
+			<source ref="id25"/>
+			<target ref="id24"/>
+			<label kind="synchronisation" x="-88" y="-48">kill!</label>
+		</transition>
+		<transition>
+			<source ref="id26"/>
+			<target ref="id25"/>
+			<label kind="synchronisation" x="-184" y="-48">stop?</label>
+		</transition>
+	</template>
+	<template>
+		<name>Control</name>
+		<parameter>int n,  broadcast chan &amp;min, broadcast chan &amp;skip_p, broadcast chan &amp;skip, broadcast chan &amp;launch, broadcast chan &amp;kill</parameter>
+		<declaration>int counter = 0;
+bool skip_v = true;</declaration>
+		<location id="id27" x="200" y="-40">
+			<name x="190" y="-70">stopped</name>
+		</location>
+		<location id="id28" x="-48" y="-40">
+			<committed/>
+		</location>
+		<location id="id29" x="-240" y="-40">
+			<name x="-250" y="-70">idle</name>
+		</location>
+		<init ref="id29"/>
+		<transition>
+			<source ref="id29"/>
+			<target ref="id27"/>
+			<label kind="synchronisation" x="-16" y="32">kill?</label>
+			<nail x="-240" y="32"/>
+			<nail x="200" y="32"/>
+		</transition>
+		<transition>
+			<source ref="id28"/>
+			<target ref="id29"/>
+			<label kind="guard" x="-200" y="0">counter&lt; n</label>
+			<nail x="-64" y="0"/>
+			<nail x="-224" y="0"/>
+		</transition>
+		<transition>
+			<source ref="id29"/>
+			<target ref="id28"/>
+			<label kind="synchronisation" x="-168" y="-104">min?</label>
+			<label kind="assignment" x="-232" y="-88">counter++, skip_v = false</label>
+			<nail x="-224" y="-72"/>
+			<nail x="-80" y="-72"/>
+		</transition>
+		<transition>
+			<source ref="id28"/>
+			<target ref="id27"/>
+			<label kind="guard" x="-8" y="-104">counter==n &amp;&amp; skip_v==true</label>
+			<label kind="synchronisation" x="56" y="-88">skip!</label>
+			<nail x="-48" y="-88"/>
+			<nail x="200" y="-88"/>
+			<nail x="200" y="-56"/>
+		</transition>
+		<transition>
+			<source ref="id28"/>
+			<target ref="id27"/>
+			<label kind="guard" x="-32" y="-56">counter==n &amp;&amp; skip_v == false</label>
+			<label kind="synchronisation" x="40" y="-40">launch!</label>
+		</transition>
+		<transition>
+			<source ref="id29"/>
+			<target ref="id28"/>
+			<label kind="synchronisation" x="-160" y="-56">skip_p?</label>
+			<label kind="assignment" x="-176" y="-40">counter++</label>
+		</transition>
+	</template>
+	<template>
+		<name>Point</name>
+		<parameter>point_t id, event_t id_e, bool urg, broadcast chan &amp;launch, broadcast chan &amp;skip_p, broadcast chan &amp;stop, broadcast chan &amp;kill_p, broadcast chan &amp;skip,  broadcast chan &amp;start</parameter>
+		<declaration>bool cond;</declaration>
+		<location id="id30" x="-216" y="112">
+			<committed/>
+		</location>
+		<location id="id31" x="-272" y="-88">
+			<committed/>
+		</location>
+		<location id="id32" x="128" y="16">
+			<name x="96" y="-16">stopped</name>
+		</location>
+		<location id="id33" x="-32" y="16">
+			<committed/>
+		</location>
+		<location id="id34" x="-272" y="16">
+			<name x="-320" y="-16">waiting_event</name>
+		</location>
+		<location id="id35" x="-376" y="16">
+			<name x="-386" y="-14">idle</name>
+		</location>
+		<init ref="id35"/>
+		<transition>
+			<source ref="id34"/>
+			<target ref="id34"/>
+			<label kind="guard" x="-352" y="232">condition(id,msg[id_e]) == false</label>
+			<label kind="synchronisation" x="-280" y="248">event[id_e]?</label>
+			<nail x="-328" y="56"/>
+			<nail x="-272" y="88"/>
+		</transition>
+		<transition>
+			<source ref="id35"/>
+			<target ref="id32"/>
+			<label kind="synchronisation" x="-152" y="160">kill_p ?</label>
+			<nail x="-376" y="152"/>
+			<nail x="128" y="152"/>
+		</transition>
+		<transition>
+			<source ref="id35"/>
+			<target ref="id30"/>
+			<label kind="synchronisation" x="-312" y="112">stop?</label>
+			<nail x="-336" y="112"/>
+		</transition>
+		<transition>
+			<source ref="id30"/>
+			<target ref="id32"/>
+			<label kind="guard" x="-16" y="96">urg==false</label>
+			<label kind="synchronisation" x="0" y="112">skip!</label>
+			<nail x="72" y="112"/>
+		</transition>
+		<transition>
+			<source ref="id30"/>
+			<target ref="id32"/>
+			<label kind="guard" x="-96" y="72">urg == true</label>
+			<label kind="synchronisation" x="-88" y="56">start!</label>
+			<nail x="16" y="72"/>
+		</transition>
+		<transition>
+			<source ref="id34"/>
+			<target ref="id30"/>
+			<label kind="guard" x="-256" y="40">en[id_e]==true</label>
+			<label kind="synchronisation" x="-232" y="56">stop?</label>
+		</transition>
+		<transition>
+			<source ref="id31"/>
+			<target ref="id32"/>
+			<label kind="synchronisation" x="-152" y="-104">skip!</label>
+			<nail x="128" y="-88"/>
+		</transition>
+		<transition>
+			<source ref="id35"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="-360" y="-104">skip_p?</label>
+			<nail x="-376" y="-88"/>
+		</transition>
+		<transition>
+			<source ref="id34"/>
+			<target ref="id31"/>
+			<label kind="guard" x="-264" y="-72">en[id_e] == false</label>
+			<label kind="synchronisation" x="-264" y="-56">stop ?</label>
+		</transition>
+		<transition>
+			<source ref="id33"/>
+			<target ref="id32"/>
+			<label kind="synchronisation" x="16" y="0">start!</label>
+		</transition>
+		<transition>
+			<source ref="id34"/>
+			<target ref="id33"/>
+			<label kind="guard" x="-264" y="16">condition(id, msg[id_e]) == true</label>
+			<label kind="synchronisation" x="-248" y="0">event[id_e] ?</label>
+			<label kind="assignment" x="-160" y="0">en[id_e]=false</label>
+			<nail x="-256" y="16"/>
+		</transition>
+		<transition>
+			<source ref="id35"/>
+			<target ref="id34"/>
+			<label kind="synchronisation" x="-352" y="0">launch?</label>
+			<label kind="assignment" x="-368" y="16">en[id_e]=true</label>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+
+// Event :
+// event_t id, -&gt; Event's identifier 
+// int date, -&gt; Date to trigger the event
+// int val -&gt; Message of the event.
+startEvent = Event(0, 0, 1);
+// Event 1 to start Box 4
+stopBox4Event = Event(2, 20, 1); // Event 2 to stop Box 4
+chooseEvent = Event(3,20,15);// Event 3 to choose
+
+// Points :
+// point_t id, -&gt; Point's identifier
+// event_t id_e, -&gt; Event's identifier
+// bool urg, -&gt; Is it an urgent point ?
+// broadcast chan &amp;launch,  -&gt; Event to start to listening
+// broadcast chan &amp;skip_p, -&gt; Event to skip to listening
+// broadcast chan stop, -&gt;  Event to stop to listening*
+// broadcast chan &amp;kill_p, -&gt; Event to kill the point (father)
+// broadcast chan &amp;skip,  -&gt; Event to skip the next interval
+// broadcast chan &amp;start -&gt; Event to start/stop the next interval.
+ipStartBox4_0 = Point(0, 1,  true, stoppedC[1], skippedC[1], stopP[0], killedTO[0], skippedP[0], stoppedP[0]);
+mixPoint_0 = Mix(stoppedP[0],skippedP[0],stopP[0]);
+ipEndBox4_1 = Point(1, 2, true, startP[1], skippedTO[4], stoppedTO[4], killedTO[0], skippedTO[0], stoppedP[1] );
+
+choose_2 = Point(2, 3, true, startP[2], skippedI[8], stoppedI[8], killedTO[4], skippedP[2], stoppedP[2]);
+choose_3 = Point(3, 3, true, startP[2], skippedI[8], stoppedI[8],killedTO[4], skippedP[3], stoppedP[3]);
+mixPoint_2 = Mix(stoppedP[2],skippedP[2],stoppedI[8]);
+mixPoint_3 = Mix(stoppedP[3],skippedP[3],stoppedI[8]);
+
+//StoppedI[8]
+
+// Flexible:
+// int dmin -&gt; Minimum duration 
+// int dmax -&gt; Maximum duration.
+// bool finite -&gt; Define whether the duration is finite or not.
+// broadcast chan &amp;launch -&gt; Event to start the interval
+// broadcast chan &amp;start -&gt; Event to start the children.
+// broadcast chan &amp;min -&gt; Event to notify that the minimum duration has elapsed.
+// broadcast chan &amp;timeout -&gt; Event to stop the interval.
+// broadcast chan &amp;stop -&gt; Event to start/stop the next interval.
+// broadcast chan &amp;skip_p -&gt; Event to skip the interval
+// broadcast chan &amp;kill_p -&gt; Event to kill the interval (father)
+// broadcast chan &amp;skip -&gt; Event to skip the next interval
+// broadcast chan &amp;kill -&gt; Event to kill the children.
+score = Flexible(0,0, false, event[0], startedTO[0], startC[0], stoppedC[0], stoppedTO[0], skippedC[0], null, skipC[0], null);
+interval_1 = Flexible(1, 5, true, stoppedTO[1], startedI[1], startC[1], stopP[0], stopP[0], skippedTO[1], killedTO[0], skipC[1], null);
+interval_3 = Flexible(3, 8, true, stoppedTO[2], startedI[2], startC[1], stopP[0], stopP[0], skippedTO[2], killedTO[0], skipC[1], null);
+box_4 = Flexible(2, 18, true, stoppedP[0], startedTO[4], startP[1], stoppedP[1], stoppedTO[4], skippedP[0], killedTO[0], skippedTO[4], killedTO[4]);
+
+interval_8 = Flexible(1, 5, true, startedTO[4], startedI[8], startP[2], stoppedI[8], stoppedI[8], skippedTO[4], killedTO[4], skippedI[8], null );
+
+
+interval_11 = Flexible(1,0,false, stoppedTO[6], startedI[11], startC[2], stoppedC[2], stoppedC[2], skippedTO[6], killedTO[4], skipC[2], null);
+interval_12 = Flexible(1,0,false, stoppedTO[7], startedI[12], startC[2], stoppedC[2], stoppedC[2], skippedTO[7], killedTO[4], skipC[2], null);
+
+interval_6 = Flexible(0, 0, false, stoppedTO[4], startedI[6], startC[0], stoppedC[0], stoppedI[6], skippedTO[4], killedTO[0], skipC[0], null);
+interval_5 = Flexible(0, 0, false, stoppedTO[3], startedI[5], startC[0], stoppedC[0], stoppedI[5], skippedTO[3], killedTO[0], skipC[0], null);
+
+// Mix :
+// broadcast chan &amp;stop, -&gt; Event to start the next intervals
+// broadcast chan &amp;skip, -&gt; Event to skip the structure
+// broadcast chan &amp;kill -&gt; Event to kill the children
+killChildren_Box4 = Mix(stoppedTO[4], skippedTO[4], killedTO[4]);
+
+
+// Control :
+// interval_t n, -&gt; Number of preceding intervals  
+// broadcast chan &amp;min, -&gt; Event to notify that an intervals reaches its minimum duration
+// broadcast chan &amp;skip_p, -&gt; Event to skip the interval
+// broadcast chan &amp;skip,  -&gt; Event to skip the next interval
+// broadcast chan &amp;launch,  -&gt; Event to start or stop the next interval
+// broadcast chan &amp;kill   -&gt; Event to kill the interval (father)
+stopScore = Control(3, startC[0], skipC[0], skippedC[0], stoppedC[0], null);
+startPoint_0 = Control(2, startC[1], skipC[1], skippedC[1], stoppedC[1], killedTO[0]);
+controlBox8 = Control(2, startC[2], skipC[2], skippedC[2], stoppedC[2], killedTO[4]);
+
+
+// Rigid : 
+// int dur, -&gt; Duration of the interval 
+// broadcast chan &amp;launch, -&gt; Event to start the interval
+// broadcast chan &amp;start, -&gt; Event to start the multimedia processes
+// broadcast chan &amp;stop, -&gt; Event to stop the processes and launch the next interval
+// broadcast chan &amp;skip_p, -&gt; Event to skip the interval
+// broadcast chan &amp;kill_p, -&gt; Event to kill the interval (sent by the father)
+// broadcast chan &amp;skip, -&gt; Event to skip the next interval
+interval_0 = Rigid(3, startedTO[0], startedI[0], stoppedI[0], skippedTO[0], killedTO[0], skippedI[0]);
+box_1 = Rigid(4, stoppedI[0], startedTO[1], stoppedTO[1], skippedI[0], killedTO[0], skippedTO[1]);
+
+interval_2 = Rigid(1, startedTO[0], startedI[2], stoppedI[2], skippedTO[0], killedTO[0], skippedI[2]);
+box_2 = Rigid(5, stoppedI[2], startedTO[2], stoppedTO[2], skippedI[2], killedTO[0], skippedTO[2]);
+
+interval_4 = Rigid(0,stoppedTO[2], startedI[4], stoppedI[4], skippedTO[2], killedTO[0], skippedI[4]);
+box_3 = Rigid(15, stoppedI[4], startedTO[3], stoppedTO[3], skippedI[4], killedTO[0], skippedTO[3]);
+
+
+
+
+interval_7 = Rigid(3, startedTO[4], startedI[6], stoppedI[7], skippedTO[4], killedTO[4], skippedI[7]);
+
+box_5 = Rigid(5, stoppedI[7], startedTO[5], stoppedTO[5], skippedI[7], killedTO[4], skippedTO[5]);
+
+interval_9 = Rigid(1, stoppedP[2], startedI[9], stoppedI[9], skippedP[2], killedTO[4], skippedI[9]);
+interval_10 = Rigid(1, stoppedP[3], startedI[10], stoppedI[10], skippedP[3], killedTO[4], skippedI[10]);
+
+box_6 = Rigid(3, stoppedI[9], startedTO[6], stoppedTO[6], skippedI[9], killedTO[4], skippedTO[6]);
+box_7 = Rigid(5, stoppedI[10], startedTO[7], stoppedTO[7], skippedI[10], killedTO[4], skippedTO[7]);
+
+box_8 = Rigid(2, stoppedC[2], startedTO[8], stoppedTO[8], skippedC[2], killedTO[4], skippedTO[8]);
+
+// List one or more processes to be composed into a system.
+system startEvent, score, stopScore, interval_0, box_1, interval_1, interval_2, box_2, interval_3, interval_4, box_3, interval_5, ipStartBox4_0, startPoint_0, interval_6, box_4, ipEndBox4_1, stopBox4Event, interval_7, box_5, interval_8, choose_2, choose_3, chooseEvent, killChildren_Box4, interval_9, interval_10, mixPoint_0, mixPoint_2, mixPoint_3, box_6, box_7, interval_11, interval_12, controlBox8, box_8;</system>
+	<queries>
+	</queries>
+</nta>

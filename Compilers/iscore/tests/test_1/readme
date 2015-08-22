@@ -1,0 +1,17 @@
+This example represents a static score.
+- To represent a structure :
+  * Flexible template
+  * Its maximum duration is not finite
+  * Its minimum duration depends on the duration of the box in i-score
+  * It is necessary to use a "control template" to stop the structure.
+    - its minimum duration event is the start of the control template.
+    - The end event of the control template is the "timeout" event of the flexible template
+    - Each TO which is the last box to execute in a branch synchronizes its end with the start of the control.
+  * In the case of the scenario:
+    - The minimum duration is 0
+
+
+- To control several fixed intervals:
+  * Control Template
+  * It is necessary to create a new event for the end of each interval and the start of the control.
+  * The end event of the control is the start event of the following TO

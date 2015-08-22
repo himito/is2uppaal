@@ -1,0 +1,38 @@
+// Place template instantiations here.
+
+// Event :
+// event_t id, -> Event's identifier
+// int dur, -> Date to trigger the event
+// int val -> Message of the event.
+startEvent = Event(0, 0, 1);
+
+
+// Flexible:
+// int dmin -> Minimum duration
+// int dmax -> Maximum duration.
+// bool finite -> Define whether the duration is finite or not.
+// broadcast chan &launch -> Event to start the interval
+// broadcast chan &start -> Event to start the children.
+// broadcast chan &min -> Event to notify that the minimum duration has elapsed.
+// broadcast chan &max -> Event to notify that the maximum duration has elapsed.
+// broadcast chan &timeout -> Event to stop the interval.
+// broadcast chan &stop -> Event to start the next interval.
+// broadcast chan &skip_p -> Event to skip the interval
+// broadcast chan &kill_p -> Event to kill the interval
+// broadcast chan &skip -> Event to skip the next interval
+// broadcast chan &kill -> Event to kill the children.
+score = Flexible(0,0, false, event[0], startedTO[0], minDurationS[0], maxDurationS[0], timeoutTO[0], stoppedTO[0], null, null, null, null);
+
+
+// Merge :
+// interval_t n, -> Number of preceding intervals
+// broadcast chan &min, -> Event to notify that an intervals reaches its minimum duration
+// broadcast chan &skip_p, -> Event to skip the interval
+// broadcast chan &skip,  -> Event to skip the next interval
+// broadcast chan &launch,  -> Event to start or stop the next interval
+// broadcast chan &kill   -> Event to kill the interval
+
+stopScore = Merge(1, minDurationS[0], null, null, timeoutTO[0], null);
+
+// List one or more processes to be composed into a system.
+system startEvent, score, stopScore;

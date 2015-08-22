@@ -1,0 +1,76 @@
+// Place template instantiations here.
+
+// Event :
+// event_t id, -> Event's identifier
+// int date, -> Date to trigger the event
+// int val -> Message of the event.
+startEvent = Event(0, 0, 1);
+// Event 1 to start Box 4
+stopBox4Event = Event(2, 23, 1); // Event 2 to stop Box 4
+
+// Points :
+// point_t id, -> Point's identifier
+// event_t id_e, -> Event's identifier
+// bool urg, -> Is it an urgent point ?
+// broadcast chan &launch,  -> Event to start to listening
+// broadcast chan &skip_p, -> Event to skip to listening
+// broadcast chan stop, ->  Event to stop to listening*
+// broadcast chan &kill_p, -> Event to kill the point (father)
+// broadcast chan &skip,  -> Event to skip the next interval
+// broadcast chan &start -> Event to start the next interval.
+ipStartBox4_0 = Point(0, 1,  true, stoppedC[1], skippedC[1], stopP[0], killedTO[0], skippedP[0], stoppedP[0]);
+ipEndBox4_1 = Point(1, 2, true, startP[1], skippedTO[4], stoppedTO[4], killedTO[0], skippedTO[0], stoppedP[1] );
+
+
+// Flexible:
+// int dmin -> Minimum duration
+// int dmax -> Maximum duration.
+// bool finite -> Define whether the duration is finite or not.
+// broadcast chan &launch -> Event to start the interval
+// broadcast chan &start -> Event to start the children.
+// broadcast chan &min -> Event to notify that the minimum duration has elapsed.
+// broadcast chan &timeout -> Event to stop the interval.
+// broadcast chan &stop -> Event to start the next interval.
+// broadcast chan &skip_p -> Event to skip the interval
+// broadcast chan &kill_p -> Event to kill the interval (father)
+// broadcast chan &skip -> Event to skip the next interval
+// broadcast chan &kill -> Event to kill the children.
+score = Flexible(0,0, false, event[0], startedTO[0], startC[0], stoppedC[0], stoppedTO[0], skippedC[0], null, skipC[0], null);
+interval_1 = Flexible(1, 5, true, stoppedTO[1], startedI[1], startC[1], stoppedP[0], stopP[0], skippedTO[1], killedTO[0], skipC[1], null);
+interval_3 = Flexible(3, 8, true, stoppedTO[2], startedI[2], startC[1], stoppedP[0], stopP[0], skippedTO[2], killedTO[0], skipC[1], null);
+box_4 = Flexible(2, 0, false, stoppedP[0], startedTO[4], startP[1], stoppedP[1], stoppedTO[4], skippedP[0], killedTO[0], skippedTO[4], killedTO[4]);
+
+
+// Control :
+// interval_t n, -> Number of preceding intervals
+// broadcast chan &min, -> Event to notify that an intervals reaches its minimum duration
+// broadcast chan &skip_p, -> Event to skip the interval
+// broadcast chan &skip,  -> Event to skip the next interval
+// broadcast chan &launch,  -> Event to start or stop the next interval
+// broadcast chan &kill   -> Event to kill the interval (father)
+stopScore = Control(3, startC[0], skipC[0], skippedC[0], stoppedC[0], null);
+startPoint_0 = Control(2, startC[1], skipC[1], skippedC[1], stoppedC[1], killedTO[0]);
+
+
+// Rigid :
+// int dur, -> Duration of the interval
+// broadcast chan &launch, -> Event to start the interval
+// broadcast chan &start, -> Event to start the processes
+// broadcast chan &stop, -> Event to stop the processes and launch the next interval
+// broadcast chan &skip_p, -> Event to skip the interval
+// broadcast chan &kill_p, -> Event to kill the interval (sent by the father)
+// broadcast chan &skip, -> Event to skip the next interval
+interval_0 = Rigid(3, startedTO[0], startedI[0], stoppedI[0], skippedTO[0], killedTO[0], skippedI[0]);
+box_1 = Rigid(4, stoppedI[0], startedTO[1], stoppedTO[1], skippedI[0], killedTO[0], skippedTO[1]);
+
+interval_2 = Rigid(1, startedTO[0], startedI[2], stoppedI[2], skippedTO[0], killedTO[0], skippedI[2]);
+box_2 = Rigid(5, stoppedI[2], startedTO[2], stoppedTO[2], skippedI[2], killedTO[0], skippedTO[2]);
+
+interval_4 = Rigid(0,stoppedTO[2], startedI[4], stoppedI[4], skippedTO[2], killedTO[0], skippedI[4]);
+box_3 = Rigid(15, stoppedI[4], startedTO[3], stoppedTO[3], skippedI[4], killedTO[0], skippedTO[3]);
+interval_5 = Rigid(0, stoppedTO[3], startedI[5], startC[0], skippedTO[3], killedTO[0], skipC[0]);
+
+interval_6 = Rigid(0, stoppedTO[4], startedI[6], startC[0], skippedTO[4], killedTO[0], skipC[0]);
+
+// List one or more processes to be composed into a system.
+system startEvent, score, stopScore, interval_0, box_1, interval_1, interval_2, box_2, interval_3, interval_4, box_3, interval_5, ipStartBox4_0, startPoint_0, interval_6, box_4, ipEndBox4_1, stopBox4Event;

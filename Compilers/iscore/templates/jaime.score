@@ -1,0 +1,76 @@
+ <Scenario name="Main">
+  <startEvent name="start" date="0u"/>
+  <endEvent name="end" date="36000000u"/>
+  <event name="j3785260106" date="688u"/>
+  <event name="j869089454" date="720u"/>
+  <event name="j2067290938" date="784u"/>
+  <event name="j3708170644" date="1072u"/>
+  <event name="j3291466677" date="1792u"/>
+  <event name="j1312204361" date="4752u"/>
+  <event name="j457016415" date="4784u"  condition="j259802880"/>
+  <event name="j1233154639" date="5296u"/>
+  <event name="j2414412797" date="5472u"/>
+  <event name="j3401674313" date="5472u"/>
+  <event name="j3667241982" date="7632u"  condition="j4240929984"/>
+  <event name="j3528595838" date="7760u"/>
+  <event name="j3048490850" date="7872u"  condition="j3025367399"/>
+  <event name="j2776796198" date="7872u"/>
+  <event name="j1564669043" date="10544u"/>
+  <event name="j2353626920" date="10624u"/>
+  <event name="j2217341531" date="11344u"/>
+  <event name="j2735748264" date="11376u"/>
+  <event name="j3216638089" date="12496u"/>
+  <event name="j1872872624" date="14240u">
+   <command address="OSCdevice:/some/test">0</command>
+  </event>
+  <event name="j29851634" date="22400u">
+   <command address="OSCdevice:/some/test">1</command>
+  </event>
+  <event name="j4211885730" date="22656u"/>
+  <Automation name="Box.2" start="j2067290938" end="j2414412797"/>
+  <Scenario name="j2037723841" start="j2067290938" end="j2414412797"/>
+  <Automation name="Box.3" start="j3216638089" end="j4211885730"/>
+  <Automation name="Box.6" start="j3528595838" end="j2353626920"/>
+  <Scenario name="j3167805190" start="j3528595838" end="j2353626920"/>
+  <Interval name="j4131395331" start="j2414412797" end="j3528595838" durationMin="2288u" durationMax="2288u"/>
+  <Automation name="Box.7" start="j3785260106" end="j3401674313"/>
+  <Scenario name="j3324387958" start="j3785260106" end="j3401674313"/>
+  <Automation name="Box.8" start="j3048490850" end="j2217341531"/>
+  <Scenario name="j3582796793" start="j3048490850" end="j2217341531"/>
+  <Interval name="j708950840" start="j3401674313" end="j3048490850"/>
+  <Automation name="Box.9" start="j869089454" end="j1233154639"/>
+  <Scenario name="j2485192405" start="j869089454" end="j1233154639"/>
+  <Automation name="Box.10" start="j3667241982" end="j2735748264"/>
+  <Scenario name="j3065526941" start="j3667241982" end="j2735748264"/>
+  <Interval name="j150823253" start="j1233154639" end="j3667241982" durationMin="992u" durationMax="2912u"/>
+  <Automation name="Box.11" start="j3708170644" end="j1312204361"/>
+  <Scenario name="j3214637910" start="j3708170644" end="j1312204361"/>
+  <Automation name="Box.12" start="j2776796198" end="j1564669043"/>
+  <Scenario name="j3959493376" start="j2776796198" end="j1564669043"/>
+  <Interval name="j605193228" start="j1312204361" end="j2776796198"/>
+  <Automation name="Box.13" start="j1872872624" end="j29851634">
+  </Automation>
+  <Scenario name="j3186155624" start="j1872872624" end="j29851634"/>
+  <Automation name="Box.14" start="j3291466677" end="j457016415"/>
+  <Scenario name="j135743214" start="j3291466677" end="j457016415"/>
+  <condition name="j3025367399" dispose="">
+   <case event="j3048490850" trigger="/Box.8/start" default="1"/>
+  </condition>
+  <condition name="j4240929984" dispose="">
+   <case event="j3667241982" trigger="/Box.10/start" default="1"/>
+  </condition>
+  <condition name="j259802880" dispose="">
+   <case event="j457016415" trigger="/Box.14/end" default="1"/>
+  </condition>
+  <Scenario name="j816077851" start="j3216638089" end="j4211885730">
+   <event name="j3678908929" date="1024u"/>
+   <event name="j3360100745" date="4000u"/>
+   <event name="j2049376023" date="5888u"/>
+   <event name="j1097600812" date="8688u"/>
+   <Automation name="Box.4" start="j3678908929" end="j3360100745"/>
+   <Scenario name="j3149276418" start="j3678908929" end="j3360100745"/>
+   <Automation name="Box.5" start="j2049376023" end="j1097600812"/>
+   <Scenario name="j1351796971" start="j2049376023" end="j1097600812"/>
+   <Interval name="j2625802146" start="j3360100745" end="j2049376023" durationMin="1888u" durationMax="1888u"/>
+  </Scenario>
+ </Scenario>

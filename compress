@@ -1,1 +1,0 @@
-tar cvzf is2uppaal.tar.gz --exclude=Compilers/iscore/tests --exclude=Compilers/iscore/templates --exclude=*.merlin  --exclude=*.DS_Store Compilers
